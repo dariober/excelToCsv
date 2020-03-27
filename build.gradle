@@ -1,0 +1,51 @@
+apply plugin: 'java'
+apply plugin: 'jacoco'
+
+def jversion= JavaVersion.VERSION_1_8
+
+sourceCompatibility= jversion 
+targetCompatibility= jversion
+
+if(JavaVersion.current() < jversion) {
+	throw new GradleException("Java >= " + jversion + " is required but you are running " + JavaVersion.current())
+}
+
+test {
+    testLogging {
+        events "passed", "skipped", "failed"
+        exceptionFormat "full"
+    }
+}
+
+repositories {
+    jcenter()
+    maven { url 'https://jitpack.io' }
+}
+
+jar {
+    manifest {
+        attributes "Main-Class": "excel2csv.Main"
+    }
+ 
+    from {
+        configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+}
+
+dependencies {
+	
+	compile group: 'net.sourceforge.argparse4j', name: 'argparse4j', version: '0.8.1'
+	compile group: 'org.apache.poi', name: 'poi', version: '4.1.2'
+	compile group: 'org.apache.poi', name: 'poi-ooxml', version: '4.1.2'
+	compile group: 'org.apache.commons', name: 'commons-csv', version: '1.8'
+    compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.9'
+	compile group: 'org.apache.commons', name: 'commons-text', version: '1.8'
+    testCompile 'junit:junit:4.12'
+}
+
+jacocoTestReport {
+    reports {
+        xml.enabled true
+        html.enabled false
+    }
+}
