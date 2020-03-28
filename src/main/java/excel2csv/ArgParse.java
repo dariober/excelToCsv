@@ -46,6 +46,12 @@ public class ArgParse {
 			.setDefault("\"")
 			.help("Character for quoting or an empty string for no quoting");
 		
+		parser.addArgument("--sheet", "-s")
+			.type(String.class)
+			.required(false)
+			.nargs("*")
+			.help("Optional list of sheet names or sheet indexes to export (first sheet has index 1)");
+		
 		parser.addArgument("--drop-empty-rows", "-r")
 			.action(Arguments.storeTrue())
 			.help("Skip rows with only empty cells");

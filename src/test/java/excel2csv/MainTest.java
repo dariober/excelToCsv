@@ -33,6 +33,58 @@ public class MainTest {
 		assertTrue(stdout.contains("1933-10-18T12:36:00Z"));
 	}
 	
+	@Test
+	public void testRequestSheets() throws InvalidFormatException, IOException {
+		String[] args = "-s Sheet1 -- test_data/simple01.xlsx".split(" ");
+		List<String> out = this.runMain(args);
+		String stdout = out.get(0);
+		String stderr = out.get(1);
+		assertEquals(0, stderr.length());
+		assertTrue(stdout.contains("Sheet1"));
+		assertTrue( ! stdout.contains("Sheet2"));
+	
+		args = "-s Sheet2 -- test_data/simple01.xlsx".split(" ");
+		out = this.runMain(args);
+		stdout = out.get(0);
+		stderr = out.get(1);
+		assertEquals(0, stderr.length());
+		assertTrue(stdout.contains("Sheet2"));
+		assertTrue( ! stdout.contains("Sheet1"));
+		
+		args = "-s 2 -- test_data/simple01.xlsx".split(" ");
+		out = this.runMain(args);
+		stdout = out.get(0);
+		stderr = out.get(1);
+		assertEquals(0, stderr.length());
+		assertTrue(stdout.contains("Sheet2"));
+		assertTrue( ! stdout.contains("Sheet1"));
+		
+		args = new String[] {"-s", "Sheet2", "Sheet Dates", "FOOBAR", "--", "test_data/dates.xlsx", "test_data/simple01.xlsx"};
+		out = this.runMain(args);
+		stdout = out.get(0);
+		stderr = out.get(1);
+		assertEquals(0, stderr.length());
+		assertTrue(stdout.contains("Sheet2"));
+		assertTrue( ! stdout.contains("Sheet1"));
+		assertTrue(stdout.contains("Sheet Dates"));
+		
+		args = new String[] {"-s", "2", "Sheet1", "--", "test_data/dates.xlsx", "test_data/simple01.xlsx"};
+		out = this.runMain(args);
+		stdout = out.get(0);
+		stderr = out.get(1);
+		assertEquals(0, stderr.length());
+		assertTrue(stdout.contains("Sheet2"));
+		assertTrue(stdout.contains("Sheet1"));
+		assertTrue( ! stdout.contains("Sheet Dates"));
+		
+		args = new String[] {"-s", "99", "--", "test_data/dates.xlsx", "test_data/simple01.xlsx"};
+		out = this.runMain(args);
+		stdout = out.get(0);
+		stderr = out.get(1);
+		assertEquals(0, stderr.length());
+		assertEquals(0, stdout.length());
+	}
+	
 	@Test 
 	public void testSize() throws InvalidFormatException, IOException {
 		String[] args = "-na NA test_data/simple01.xlsx".split(" ");

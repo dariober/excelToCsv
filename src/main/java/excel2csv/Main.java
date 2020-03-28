@@ -174,6 +174,7 @@ public class Main {
 		boolean dropEmptyRows = opts.getBoolean("drop_empty_rows");
 		boolean dropEmptyCols = opts.getBoolean("drop_empty_cols");
 		boolean dateAsIso = opts.getBoolean("date_as_iso");
+		List<String> requestSheets = opts.getList("sheet");
 		
 		CSVPrinter csvPrinter = makeCSVPrinter(na, delimiter, quote);
     
@@ -188,7 +189,10 @@ public class Main {
 			
 			for (int i=0; i<wb.getNumberOfSheets(); i++) {
 				String sheetName = wb.getSheetName(i);
-				printSheet(wb, excelFile, sheetName, csvPrinter, dropEmptyRows, dropEmptyCols, dateAsIso);
+				boolean print = isRequestedSheet(requestSheets, sheetName, wb.getSheetIndex(sheetName));
+				if(print) {
+					printSheet(wb, excelFile, sheetName, csvPrinter, dropEmptyRows, dropEmptyCols, dateAsIso);
+				}
 			}
 			
 			wb.close();
@@ -196,6 +200,27 @@ public class Main {
 		csvPrinter.close();
 	}
 	
+	private static boolean isRequestedSheet(List<String> reqsheets, String sheetName, int sheetIndex) {
+		if(reqsheets == null || reqsheets.size() == 0) {
+			return true;
+		}
+		if(reqsheets.contains(sheetName)) {
+			return true;
+		}
+		for(String x : reqsheets) {
+			int idx;
+			try {
+				idx = Integer.parseInt(x) - 1;
+				if(idx == sheetIndex) {
+					return true;
+				}
+			} catch( NumberFormatException e) {
+				//
+			}
+		}
+		return false;
+	}
+
 	public static void main(String[] args) throws IOException, InvalidFormatException {
 		try {
 			run(args);
