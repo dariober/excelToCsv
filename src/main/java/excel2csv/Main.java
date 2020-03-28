@@ -5,11 +5,13 @@ import java.io.File;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.nio.file.Files;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
 import org.apache.commons.csv.QuoteMode;
@@ -17,13 +19,14 @@ import org.apache.commons.text.StringEscapeUtils;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.poifs.filesystem.NotOLE2FileException;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.DataFormatter;
+import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.ss.usermodel.FormulaEvaluator;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
-
 import net.sourceforge.argparse4j.inf.Namespace;
 
 public class Main {
@@ -70,7 +73,7 @@ public class Main {
 	}
 	
 	private static void printSheet(Workbook wb, String excelFile, String sheetName, 
-			CSVPrinter csvPrinter, boolean dropEmptyRows, boolean dropEmptyColumns) throws IOException {
+			CSVPrinter csvPrinter, boolean dropEmptyRows, boolean dropEmptyColumns, boolean dateAsIso) throws IOException {
 		FormulaEvaluator fe = wb.getCreationHelper().createFormulaEvaluator();
 		DataFormatter formatter = new DataFormatter();
 		
@@ -102,18 +105,24 @@ public class Main {
 		            Cell cell = row.getCell(c, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);
 		            if ( cell != null ) {
 		                cell = fe.evaluateInCell(cell);
-		                String value = formatter.formatCellValue(cell);
+		                String value;
+		                if(dateAsIso && cell.getCellType().equals(CellType.NUMERIC) && DateUtil.isCellDateFormatted(cell)) {
+		                	Date d = cell.getDateCellValue();
+		                	value = d.toInstant().atZone(ZoneId.of("UTC")).format(DateTimeFormatter.ISO_INSTANT);
+		                } else {
+		                	value = formatter.formatCellValue(cell);
+		                }
 		                line.set(c, value);
 		            }
 		        }
 	        }
-	        for(int i : emptyColsIdx) {
-	        	line.remove(i);
-	        }
 	        List<String> pline = new ArrayList<String>();
 	        pline.addAll(prefix);
-	        pline.addAll(line);
-	        line.addAll(prefix);
+	        for(int i = 0; i < line.size(); i++) {
+	        	if(! emptyColsIdx.contains(i)) {
+	        		pline.add(line.get(i));
+	        	}
+	        }
 	        csvPrinter.printRecord(pline);
 	        csvPrinter.flush();
 	    }
@@ -164,6 +173,7 @@ public class Main {
 		String quote = opts.getString("quote");
 		boolean dropEmptyRows = opts.getBoolean("drop_empty_rows");
 		boolean dropEmptyCols = opts.getBoolean("drop_empty_cols");
+		boolean dateAsIso = opts.getBoolean("date_as_iso");
 		
 		CSVPrinter csvPrinter = makeCSVPrinter(na, delimiter, quote);
     
@@ -178,7 +188,7 @@ public class Main {
 			
 			for (int i=0; i<wb.getNumberOfSheets(); i++) {
 				String sheetName = wb.getSheetName(i);
-				printSheet(wb, excelFile, sheetName, csvPrinter, dropEmptyRows, dropEmptyCols);
+				printSheet(wb, excelFile, sheetName, csvPrinter, dropEmptyRows, dropEmptyCols, dateAsIso);
 			}
 			
 			wb.close();

@@ -20,7 +20,7 @@ public class ArgParse {
 				.defaultHelp(true)
 				.version("${prog} " + VERSION)
 				.description("DESCRIPTION\n"
-+ "Print Excel file as CSV");
++ "Export Excel files to CSV");
 		
 		parser.addArgument("input")
 			.type(String.class)
@@ -37,7 +37,7 @@ public class ArgParse {
 		parser.addArgument("--na-string", "-na")
 			.type(String.class)
 			.required(false)
-			.setDefault("NA")
+			.setDefault("")
 			.help("String for missing values (empty cells)");
 
 		parser.addArgument("--quote", "-q")
@@ -54,6 +54,10 @@ public class ArgParse {
 			.action(Arguments.storeTrue())
 			.help("Skip columns with only empty cells");
 		
+		parser.addArgument("--date-as-iso", "-i")
+			.action(Arguments.storeTrue())
+			.help("Convert dates to ISO 8601 format and UTC standard. E.g 2020-03-28T11:40:10Z");
+		
 		parser.addArgument("--version", "-v").action(Arguments.version());
 		
 		Namespace opts= null;
@@ -66,5 +70,4 @@ public class ArgParse {
 		}		
 		return(opts);
 	}
-	
 }

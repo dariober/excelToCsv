@@ -14,7 +14,7 @@
 Description
 ===========
 
-Command-line exporter of MS Excel files to CSV format
+Command-line exporter of MS Excel files to CSV format.
 
 Installation
 ============

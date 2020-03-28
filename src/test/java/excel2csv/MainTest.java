@@ -15,19 +15,54 @@ import org.junit.Test;
 public class MainTest {
 
 	@Test
+	public void testDates() throws InvalidFormatException, IOException {
+		String[] args = "test_data/dates.xlsx".split(" ");
+		List<String> out = this.runMain(args);
+		String stderr = out.get(1);
+		String stdout = out.get(0);
+		assertEquals(0, stderr.length());
+		assertTrue(stdout.contains("21/03/20"));
+		assertTrue(stdout.contains("18/10/1933 12:36:00"));
+		
+		args = "-i test_data/dates.xlsx".split(" ");
+		out = this.runMain(args);
+		stderr = out.get(1);
+		stdout = out.get(0);
+		assertEquals(0, stderr.length());
+		assertTrue(stdout.contains("2020-03-21T00:00:00Z"));
+		assertTrue(stdout.contains("1933-10-18T12:36:00Z"));
+	}
+	
+	@Test 
+	public void testSize() throws InvalidFormatException, IOException {
+		String[] args = "-na NA test_data/simple01.xlsx".split(" ");
+		List<String> out = this.runMain(args);
+		String stdout = out.get(0);
+		String stderr = out.get(1);
+		assertEquals(0, stderr.length());
+		String[] rows = stdout.split("\n");
+		assertEquals(14, rows.length);
+		for(String row : rows) {
+			if(row.contains("Sheet1")) {
+				assertEquals(3+7, row.split("\t").length);
+			}
+		}
+	}
+	
+	@Test
 	public void testDelimiter() throws InvalidFormatException, IOException {
 		String[] args = "test_data/simple01.xlsx".split(" ");
 		List<String> out = this.runMain(args);
 		String stdout = out.get(0);
 		String stderr = out.get(1);
-		assertEquals(stderr.length(), 0);
+		assertEquals(0, stderr.length());
 		assertTrue(StringUtils.countMatches(stdout, '\t') > 10);
 		
 		args = "-d | test_data/simple01.xlsx".split(" ");
 		out = this.runMain(args);
 		stdout = out.get(0);
 		stderr = out.get(1);
-		assertEquals(stderr.length(), 0);
+		assertEquals(0, stderr.length());
 		assertTrue(StringUtils.countMatches(stdout, '|') > 10);	
 	}
 
@@ -49,21 +84,21 @@ public class MainTest {
 		List<String> out = this.runMain(args);
 		String stdout = out.get(0);
 		String stderr = out.get(1);
-		assertEquals(stderr.length(), 0);
-		assertTrue(StringUtils.countMatches(stdout, "\tNA\t") > 10);
+		assertEquals(0, stderr.length());
+		assertTrue(StringUtils.countMatches(stdout, "\t\t") > 10);
 		
 		args = new String[] {"-na", "N/A",  "test_data/simple01.xlsx"};
 		out = this.runMain(args);
 		stdout = out.get(0);
 		stderr = out.get(1);
-		assertEquals(stderr.length(), 0);
+		assertEquals(0, stderr.length());
 		assertTrue(StringUtils.countMatches(stdout, "\tN/A\t") > 10);
 
 		args = new String[] {"-na", "",  "test_data/simple01.xlsx"};
 		out = this.runMain(args);
 		stdout = out.get(0);
 		stderr = out.get(1);
-		assertEquals(stderr.length(), 0);
+		assertEquals(0, stderr.length());
 		assertTrue(StringUtils.countMatches(stdout, "\t\t") > 10);
 	}
 	
@@ -73,14 +108,14 @@ public class MainTest {
 		List<String> out = this.runMain(args);
 		String stdout = out.get(0);
 		String stderr = out.get(1);
-		assertEquals(stderr.length(), 0);
+		assertEquals(0, stderr.length());
 		assertTrue(stdout.contains("\"#HERE!\""));
 		
 		args = new String[] {"-q", "$",  "test_data/simple01.xlsx"};
 		out = this.runMain(args);
 		stdout = out.get(0);
 		stderr = out.get(1);
-		assertEquals(stderr.length(), 0);
+		assertEquals(0, stderr.length());
 		assertTrue(stdout.contains("$#HERE!$"));
 		
 		// No quoting
@@ -88,7 +123,7 @@ public class MainTest {
 		out = this.runMain(args);
 		stdout = out.get(0);
 		stderr = out.get(1);
-		assertEquals(stderr.length(), 0);
+		assertEquals(0, stderr.length());
 		assertTrue(stdout.contains("\t#HERE!\t"));
 	}
 	
@@ -134,7 +169,7 @@ public class MainTest {
 		List<String> out = this.runMain(args);
 		String stdout = out.get(0);
 		String stderr = out.get(1);
-		assertEquals(stderr.length(), 0);
+		assertEquals(0, stderr.length());
 		assertEquals(StringUtils.countMatches(stdout, "test_data/simple01.xlsx\t1\tSheet1\t"), 10);
 		assertEquals(StringUtils.countMatches(stdout, "test_data/simple01.xlsx\t2\tSheet2\t"), 4);
 	}
@@ -145,7 +180,7 @@ public class MainTest {
 		List<String> out = this.runMain(args);
 		String stdout = out.get(0);
 		String stderr = out.get(1);
-		assertEquals(stderr.length(), 0);
+		assertEquals(0, stderr.length());
 		assertTrue(StringUtils.countMatches(stdout, "test_data/simple01.xlsx\t1\tSheet1\t") > 5);
 		assertTrue(StringUtils.countMatches(stdout, "test_data/simple01.xls\t1\tSheet1\t") > 5);
 	}
@@ -156,8 +191,8 @@ public class MainTest {
 		List<String> out = this.runMain(args);
 		String stdout = out.get(0);
 		String stderr = out.get(1);
-		assertEquals(stderr.length(), 0);
-		assertEquals(StringUtils.countMatches(stdout, "\t3.33\t"), 1);
+		assertEquals(0, stderr.length());
+		assertEquals(1, StringUtils.countMatches(stdout, "\t3.33\t"));
 	}
 	
 	@Test
@@ -166,32 +201,29 @@ public class MainTest {
 		List<String> out = this.runMain(args);
 		String stdout = out.get(0);
 		String stderr = out.get(1);
-		assertEquals(stderr.length(), 0);
+		assertEquals(0, stderr.length());
 		assertEquals(stdout.length(), 0);
 	}
 	
 	@Test
 	public void testCanSkipEmptyRows() throws InvalidFormatException, IOException {
-		String[] args = "-r test_data/simple01.xlsx".split(" ");
+		String[] args = "-na NA -r test_data/simple01.xlsx".split(" ");
 		List<String> out = this.runMain(args);
 		String stdout = out.get(0);
 		String stderr = out.get(1);
-		assertEquals(stderr.length(), 0);
+		assertEquals(0, stderr.length());
 		assertTrue( ! stdout.contains("NA\tNA\tNA\tNA\tNA\tNA\tNA"));
 		assertTrue(stdout.contains("NA\tcol1\tcol2"));
 	}
 	
 	@Test
 	public void testCanSkipEmptyColumns() throws InvalidFormatException, IOException {
-		String[] args = "-c test_data/empty_cols.xlsx".split(" ");
+		String[] args = "-d | -c test_data/empty_cols.xlsx".split(" ");
 		List<String> out = this.runMain(args);
 		String stdout = out.get(0);
 		String stderr = out.get(1);
-		System.out.println(stderr);
-		assertEquals(stderr.length(), 0);
-		// assertTrue( ! stdout.contains("Sheet1\tNA\tcol1"));
-		//System.out.println(stdout);
-		//assertTrue(stdout.contains("Sheet1\tcol1"));
+		assertEquals(0, stderr.length());
+		assertTrue(stdout.contains("test_data/empty_cols.xlsx|1|Sheet1|a|e|h"));
 	}
 	
 	/** Execute main with the given array of arguments and return a list of length 2 containing 1) stdout and 2) stderr.
