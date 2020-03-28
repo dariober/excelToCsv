@@ -1,3 +1,5 @@
 /.gradle/
 /bin/
 /build/
+*.swp
+*.~lock.*

@@ -9,7 +9,7 @@ public class Utils {
 		
 		int lastColNo = 0;
 		
-	    for (int r = 0, rn = sheet.getLastRowNum() ; r <= rn ; r++) {
+	    for (int r = 0; r <= sheet.getLastRowNum(); r++) {
 	        Row row = sheet.getRow(r);
 	        if(row == null) {
 	        	continue;

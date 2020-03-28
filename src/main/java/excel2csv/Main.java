@@ -6,7 +6,9 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.nio.file.Files;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
@@ -34,7 +36,41 @@ public class Main {
     	return row;
 	}
 
-	private static void printSheet(Workbook wb, String excelFile, String sheetName, CSVPrinter csvPrinter) throws IOException {
+	private static Set<Integer> indexOfEmptyColumns(Sheet sheet){
+		
+		// Get indexes of non-empty columns
+		Set<Integer> nonEmpty = new HashSet<Integer>();		
+	    for (int r = 0; r <= sheet.getLastRowNum(); r++) {
+	        Row row = sheet.getRow(r);
+	        if(row == null) {
+	        	continue;
+	        }
+	        for(int c = 0; c < row.getLastCellNum(); c++) {
+	        	if(row.getCell(c) != null) {
+	        		nonEmpty.add(c);
+	        	}
+	        }
+	    }
+	    
+		int maxCol = 0;
+		for(int i : nonEmpty) {
+			if(i > maxCol) {
+				maxCol = i;
+			}
+		}
+		
+		// Add to output array indexes non in nonEmpty:
+		Set<Integer> emptyIdx = new HashSet<Integer>();
+		for(int i = 0; i < maxCol; i++) {
+			if(!nonEmpty.contains(i)) {
+				emptyIdx.add(i);
+			}
+		}
+		return emptyIdx;
+	}
+	
+	private static void printSheet(Workbook wb, String excelFile, String sheetName, 
+			CSVPrinter csvPrinter, boolean dropEmptyRows, boolean dropEmptyColumns) throws IOException {
 		FormulaEvaluator fe = wb.getCreationHelper().createFormulaEvaluator();
 		DataFormatter formatter = new DataFormatter();
 		
@@ -47,11 +83,19 @@ public class Main {
 		prefix.add(excelFile);
 		prefix.add(Integer.toString(wb.getSheetIndex(sheetName) + 1));
 		prefix.add(sheetName);
+
+		Set<Integer> emptyColsIdx = new HashSet<Integer>();
+		if(dropEmptyColumns) {
+			emptyColsIdx = indexOfEmptyColumns(sheet);
+		}
 		
 		for (int r = 0; r <= lastRowNo; r++) {
 	        
 	    	Row row = sheet.getRow(r);
-	        List<String> line = makeEmptyRow(lastColNo, null);
+	        if(row == null && dropEmptyRows) {
+	        	continue;
+	        }
+	    	List<String> line = makeEmptyRow(lastColNo, null);
 	        if ( row != null ) { 
 		        for (int c = 0, cn = lastColNo; c < cn ; c++) {
 		        	
@@ -62,6 +106,9 @@ public class Main {
 		                line.set(c, value);
 		            }
 		        }
+	        }
+	        for(int i : emptyColsIdx) {
+	        	line.remove(i);
 	        }
 	        List<String> pline = new ArrayList<String>();
 	        pline.addAll(prefix);
@@ -115,24 +162,27 @@ public class Main {
 		String delimiter = StringEscapeUtils.unescapeJava(opts.getString("delimiter")); // Utils.unescapeJavaString(opts.getString("delimiter"));
 		String na = opts.getString("na_string");
 		String quote = opts.getString("quote");
+		boolean dropEmptyRows = opts.getBoolean("drop_empty_rows");
+		boolean dropEmptyCols = opts.getBoolean("drop_empty_cols");
 		
 		CSVPrinter csvPrinter = makeCSVPrinter(na, delimiter, quote);
     
-		String excelFile = input.get(0);
-		Workbook wb;
-		try {
-			wb = WorkbookFactory.create(new File(excelFile));
-		} catch(NotOLE2FileException e) {
-			System.err.println("File '" + excelFile + "' is not a valid Excel document");
-			throw new RuntimeException();
+		for(String excelFile : input) {
+			Workbook wb;
+			try {
+				wb = WorkbookFactory.create(new File(excelFile));
+			} catch(NotOLE2FileException e) {
+				System.err.println("File '" + excelFile + "' is not a valid Excel document");
+				throw new RuntimeException();
+			}
+			
+			for (int i=0; i<wb.getNumberOfSheets(); i++) {
+				String sheetName = wb.getSheetName(i);
+				printSheet(wb, excelFile, sheetName, csvPrinter, dropEmptyRows, dropEmptyCols);
+			}
+			
+			wb.close();
 		}
-		
-		for (int i=0; i<wb.getNumberOfSheets(); i++) {
-			String sheetName = wb.getSheetName(i);
-			printSheet(wb, excelFile, sheetName, csvPrinter);
-		}
-		
-		wb.close();
 		csvPrinter.close();
 	}
 	

@@ -1,0 +1,13 @@
+language: java
+
+jdk:
+  - oraclejdk8
+
+script:
+    - cp excel2csv build/libs/
+    - bash build/libs/excel2csv -h || true
+    - bash build/libs/excel2csv test_data/simple01.xlsx
+
+after_success:
+    - if [ -e ./gradlew ]; then ./gradlew jacocoTestReport;else gradle jacocoTestReport;fi
+    - bash <(curl -s https://codecov.io/bash)

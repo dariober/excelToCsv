@@ -139,6 +139,61 @@ public class MainTest {
 		assertEquals(StringUtils.countMatches(stdout, "test_data/simple01.xlsx\t2\tSheet2\t"), 4);
 	}
 	
+	@Test
+	public void testMultipleInputFiles() throws InvalidFormatException, IOException {
+		String[] args = "test_data/simple01.xlsx test_data/simple01.xls".split(" ");
+		List<String> out = this.runMain(args);
+		String stdout = out.get(0);
+		String stderr = out.get(1);
+		assertEquals(stderr.length(), 0);
+		assertTrue(StringUtils.countMatches(stdout, "test_data/simple01.xlsx\t1\tSheet1\t") > 5);
+		assertTrue(StringUtils.countMatches(stdout, "test_data/simple01.xls\t1\tSheet1\t") > 5);
+	}
+	
+	@Test
+	public void testEvaluateFormula() throws InvalidFormatException, IOException {
+		String[] args = "test_data/simple01.xlsx".split(" ");
+		List<String> out = this.runMain(args);
+		String stdout = out.get(0);
+		String stderr = out.get(1);
+		assertEquals(stderr.length(), 0);
+		assertEquals(StringUtils.countMatches(stdout, "\t3.33\t"), 1);
+	}
+	
+	@Test
+	public void testEmptyFile() throws InvalidFormatException, IOException {
+		String[] args = "test_data/empty.xlsx".split(" ");
+		List<String> out = this.runMain(args);
+		String stdout = out.get(0);
+		String stderr = out.get(1);
+		assertEquals(stderr.length(), 0);
+		assertEquals(stdout.length(), 0);
+	}
+	
+	@Test
+	public void testCanSkipEmptyRows() throws InvalidFormatException, IOException {
+		String[] args = "-r test_data/simple01.xlsx".split(" ");
+		List<String> out = this.runMain(args);
+		String stdout = out.get(0);
+		String stderr = out.get(1);
+		assertEquals(stderr.length(), 0);
+		assertTrue( ! stdout.contains("NA\tNA\tNA\tNA\tNA\tNA\tNA"));
+		assertTrue(stdout.contains("NA\tcol1\tcol2"));
+	}
+	
+	@Test
+	public void testCanSkipEmptyColumns() throws InvalidFormatException, IOException {
+		String[] args = "-c test_data/empty_cols.xlsx".split(" ");
+		List<String> out = this.runMain(args);
+		String stdout = out.get(0);
+		String stderr = out.get(1);
+		System.out.println(stderr);
+		assertEquals(stderr.length(), 0);
+		// assertTrue( ! stdout.contains("Sheet1\tNA\tcol1"));
+		//System.out.println(stdout);
+		//assertTrue(stdout.contains("Sheet1\tcol1"));
+	}
+	
 	/** Execute main with the given array of arguments and return a list of length 2 containing 1) stdout and 2) stderr.
 	 * @throws IOException 
 	 * @throws InvalidFormatException 

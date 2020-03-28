@@ -46,6 +46,14 @@ public class ArgParse {
 			.setDefault("\"")
 			.help("Character for quoting or an empty string for no quoting");
 		
+		parser.addArgument("--drop-empty-rows", "-r")
+			.action(Arguments.storeTrue())
+			.help("Skip rows with only empty cells");
+		
+		parser.addArgument("--drop-empty-cols", "-c")
+			.action(Arguments.storeTrue())
+			.help("Skip columns with only empty cells");
+		
 		parser.addArgument("--version", "-v").action(Arguments.version());
 		
 		Namespace opts= null;
