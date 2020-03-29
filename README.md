@@ -68,16 +68,13 @@ excel2csv in1.xlsx | awk '$3 == "Sheet1"'
 Installation
 ============
 
-`excel2csv` requires only Java 8 or later. There is no need for MS Excel or
-Windows to be available.
+`excel2csv` requires only Java 8 or later and no installation is needed. 
 
-There is no installation needed as the jar file from the [released
-zip](https://github.com/dariober/excel2csv/releases/) can be executed as `java
--jar /path/to/excel2.csv.jar [OPTS]`:
+* Downlaod and unzip the latest [release](https://github.com/dariober/excel2csv/releases/) 
 
-However, on *nix systems it may be more convenient to add the Bash wrapper
-`excel2csv` and the jar file `excel2csv.jar` to a directory on your PATH and
-simply use `excel2csv [OPTS]`. E.g.:
+* On Linux/Unix simply execute `excel2csv [OPTS]`, on other system use `java -jar excel2csv.jar [OPTS]`
+
+That is:
 
 ```
 curl -O https://github.com/dariober/excel2csv/releases/download/vX.Y.Z/excel2csv-x.y.z.zip
@@ -85,7 +82,6 @@ unzip excel2csv-x.y.z.zip
 
 cd excel2csv-x.y.z/
 chmod a+x excel2csv
-cp excel2csv.jar /usr/local/bin/ # Or else in your PATH e.g. ~/bin/
 cp excel2csv /usr/local/bin/     # Or else in your PATH e.g. ~/bin/
 ```
 
@@ -130,7 +126,10 @@ VERSION='0.1.0' # To match ArgParse.VERSION
 mkdir excel2csv-${VERSION}
 
 ## Copy helper script and jar file to future zip dir
-cp excel2csv excel2csv-${VERSION}/
+cat excel2csv.stub build/libs/excel2csv.jar > excel2csv-${VERSION}/excel2csv && chmod a+x excel2csv-${VERSION}/excel2csv
+
+excel2csv-${VERSION}/excel2csv -h ## Check it works ok
+
 cp build/libs/excel2csv.jar excel2csv-${VERSION}/
 cp README.md excel2csv-${VERSION}/
 

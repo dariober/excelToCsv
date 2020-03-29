@@ -7,9 +7,10 @@ jdk:
   - oraclejdk11
 
 script:
+    - cat excel2csv.stub build/libs/excel2csv.jar > excel2csv && chmod a+x excel2csv
     - cp excel2csv build/libs/
-    - bash build/libs/excel2csv -h || true
-    - bash build/libs/excel2csv test_data/simple01.xlsx
+    - ./excel2csv -h || true
+    - ./excel2csv test_data/simple01.xlsx
     - ./gradlew test jacocoTestReport;
 
 after_success:
