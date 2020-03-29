@@ -24,7 +24,7 @@ repositories {
 
 jar {
     manifest {
-        attributes "Main-Class": "excel2csv.Main"
+        attributes "Main-Class": "excelToCsv.Main"
     }
  
     from {

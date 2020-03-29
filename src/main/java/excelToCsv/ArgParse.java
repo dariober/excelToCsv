@@ -1,4 +1,4 @@
-package excel2csv;
+package excelToCsv;
 
 import net.sourceforge.argparse4j.ArgumentParsers;
 import net.sourceforge.argparse4j.impl.Arguments;
@@ -8,7 +8,7 @@ import net.sourceforge.argparse4j.inf.Namespace;
 
 public class ArgParse {
 	
-	public static String PROG_NAME= "excel2csv";
+	public static String PROG_NAME= "excelToCsv";
 	public static String VERSION= "0.1.0";
 	public static String WEB_ADDRESS= "https://github.com/dariober/...";
 	

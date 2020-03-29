@@ -1,4 +1,4 @@
-package excel2csv;
+package excelToCsv;
 
 import static org.junit.Assert.*;
 

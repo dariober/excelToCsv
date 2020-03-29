@@ -1,13 +1,14 @@
-[![Coverage Status](https://codecov.io/gh/dariober/excel2csv/branch/master/graph/badge.svg)](https://codecov.io/gh/dariober/excel2csv/branch/master)
-[![Build Status](https://travis-ci.com/dariober/excel2csv.svg?branch=master)](https://travis-ci.com/dariober/excel2csv)
+[![Coverage Status](https://codecov.io/gh/dariober/excelToCsv/branch/master/graph/badge.svg)](https://codecov.io/gh/dariober/excelToCsv/branch/master)
+[![Build Status](https://travis-ci.com/dariober/excelToCsv.svg?branch=master)](https://travis-ci.com/dariober/excelToCsv)
 [![Language](http://img.shields.io/badge/language-java-brightgreen.svg)](https://www.java.com/)
-[![License](http://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/dariober/excel2csv)
+[![License](http://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/dariober/excelToCsv)
 
 <!-- vim-markdown-toc GFM -->
 
 * [Description & Usage](#description--usage)
     * [Options](#options)
 * [Installation](#installation)
+    * [Similar programs](#similar-programs)
 * [Developer](#developer)
     * [Cut new release](#cut-new-release)
 
@@ -21,7 +22,7 @@ you have been given, you have to deal with it and one of the first things you
 may want to do is to export the data to Comma-Separated Values
 ([CSV](https://en.wikipedia.org/wiki/Comma-separated_values)) files.
 
-`excel2csv` is a command-line exporter of MS Excel files to CSV format. It
+`excelToCsv` is a command-line exporter of MS Excel files to CSV format. It
 supports **xlsx** and **xls** Excel files. All sheets in each input workbook are
 exported and concatenated to stdout. You can use the first three columns to
 extract specific spreadsheets.
@@ -61,29 +62,41 @@ Options
 Example usage:
 
 ```
-excel2csv in1.xlsx in2.xlsx
-excel2csv in1.xlsx | awk '$3 == "Sheet1"'
+excelToCsv in1.xlsx in2.xlsx
+excelToCsv in1.xlsx | awk '$3 == "Sheet1"'
 ```
 
 Installation
 ============
 
-`excel2csv` requires only Java 8 or later and no installation is needed. 
+`excelToCsv` requires only Java 8 or later and no installation is needed. 
 
-* Downlaod and unzip the latest [release](https://github.com/dariober/excel2csv/releases/) 
+* Download and unzip the latest [release](https://github.com/dariober/excelToCsv/releases/) 
 
-* On Linux/Unix simply execute `excel2csv [OPTS]`, on other system use `java -jar excel2csv.jar [OPTS]`
+* On Linux/Unix simply execute `excelToCsv [OPTS]`, on other system use `java -jar excelToCsv.jar [OPTS]`
 
 That is:
 
 ```
-curl -O https://github.com/dariober/excel2csv/releases/download/vX.Y.Z/excel2csv-x.y.z.zip
-unzip excel2csv-x.y.z.zip
+curl -O https://github.com/dariober/excelToCsv/releases/download/vX.Y.Z/excelToCsv-x.y.z.zip
+unzip excelToCsv-x.y.z.zip
 
-cd excel2csv-x.y.z/
-chmod a+x excel2csv
-cp excel2csv /usr/local/bin/     # Or else in your PATH e.g. ~/bin/
+cd excelToCsv-x.y.z/
+chmod a+x excelToCsv
+cp excelToCsv /usr/local/bin/     # Or else in your PATH e.g. ~/bin/
 ```
+
+Similar programs
+----------------
+
+There are a number of Excel-to-CSV exporters. I found this
+[excelToCsv](https://github.com/informationsea/excelToCsv) when I already wrote
+mine also based on the Java POI package.
+
+I think converters based on Python packages like pandas, xlrd or openpyxl cannot
+faithfully convert the content of MS Excel (see for example this
+[question](https://stackoverflow.com/questions/60802014/how-to-consistently-handle-excel-boolean-with-pandas)
+of mine).
 
 Developer
 =========
@@ -117,23 +130,23 @@ files the user may find useful (*e.g.* this README file). Upload this zip file
 to GitHub as a new release.
 
 ```
-cd ~/git_repos/excel2csv ## Or wherever the latest local dir is
+cd ~/git_repos/excelToCsv ## Or wherever the latest local dir is
 
 ./gradlew build
 
 VERSION='0.1.0' # To match ArgParse.VERSION
 
-mkdir excel2csv-${VERSION}
+mkdir excelToCsv-${VERSION}
 
 ## Copy helper script and jar file to future zip dir
-cat excel2csv.stub build/libs/excel2csv.jar > excel2csv-${VERSION}/excel2csv && chmod a+x excel2csv-${VERSION}/excel2csv
+cat excelToCsv.stub build/libs/excelToCsv.jar > excelToCsv-${VERSION}/excelToCsv && chmod a+x excelToCsv-${VERSION}/excelToCsv
 
-excel2csv-${VERSION}/excel2csv -h ## Check it works ok
+excelToCsv-${VERSION}/excelToCsv -h ## Check it works ok
 
-cp build/libs/excel2csv.jar excel2csv-${VERSION}/
-cp README.md excel2csv-${VERSION}/
+cp build/libs/excelToCsv.jar excelToCsv-${VERSION}/
+cp README.md excelToCsv-${VERSION}/
 
 ## Zip up
-zip -r excel2csv-${VERSION}.zip excel2csv-${VERSION}
-rm -r excel2csv-${VERSION}
+zip -r excelToCsv-${VERSION}.zip excelToCsv-${VERSION}
+rm -r excelToCsv-${VERSION}
 ```

@@ -1,4 +1,4 @@
-package excel2csv;
+package excelToCsv;
 
 import java.io.File;
 import java.io.IOException;
