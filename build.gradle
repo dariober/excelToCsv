@@ -40,6 +40,8 @@ dependencies {
 	compile group: 'org.apache.commons', name: 'commons-csv', version: '1.8'
     compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.9'
 	compile group: 'org.apache.commons', name: 'commons-text', version: '1.8'
+	compile group: 'net.sf.supercsv', name: 'super-csv', version: '2.4.0'
+	
     testCompile 'junit:junit:4.12'
 }
 

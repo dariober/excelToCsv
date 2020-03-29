@@ -1,6 +1,5 @@
 package excel2csv;
 
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
@@ -12,9 +11,6 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import org.apache.commons.csv.CSVFormat;
-import org.apache.commons.csv.CSVPrinter;
-import org.apache.commons.csv.QuoteMode;
 import org.apache.commons.text.StringEscapeUtils;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.poifs.filesystem.NotOLE2FileException;
@@ -27,6 +23,9 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
+import org.supercsv.io.CsvListWriter;
+import org.supercsv.prefs.CsvPreference;
+
 import net.sourceforge.argparse4j.inf.Namespace;
 
 public class Main {
@@ -73,7 +72,8 @@ public class Main {
 	}
 	
 	private static void printSheet(Workbook wb, String excelFile, String sheetName, 
-			CSVPrinter csvPrinter, boolean dropEmptyRows, boolean dropEmptyColumns, boolean dateAsIso) throws IOException {
+			CsvListWriter listWriter, String na, boolean dropEmptyRows, boolean dropEmptyColumns, boolean dateAsIso, boolean noPrefix) throws IOException {
+
 		FormulaEvaluator fe = wb.getCreationHelper().createFormulaEvaluator();
 		DataFormatter formatter = new DataFormatter();
 		
@@ -98,7 +98,7 @@ public class Main {
 	        if(row == null && dropEmptyRows) {
 	        	continue;
 	        }
-	    	List<String> line = makeEmptyRow(lastColNo, null);
+	    	List<String> line = makeEmptyRow(lastColNo, na);
 	        if ( row != null ) { 
 		        for (int c = 0, cn = lastColNo; c < cn ; c++) {
 		        	
@@ -113,47 +113,44 @@ public class Main {
 		                	value = formatter.formatCellValue(cell);
 		                }
 		                line.set(c, value);
+		            } else {
+		            	line.set(c, na);
 		            }
 		        }
 	        }
 	        List<String> pline = new ArrayList<String>();
-	        pline.addAll(prefix);
+	        if(!noPrefix) {
+	        	pline.addAll(prefix);
+	        }
 	        for(int i = 0; i < line.size(); i++) {
 	        	if(! emptyColsIdx.contains(i)) {
 	        		pline.add(line.get(i));
 	        	}
 	        }
-	        csvPrinter.printRecord(pline);
-	        csvPrinter.flush();
+	        listWriter.write(pline);
+	        listWriter.flush();
 	    }
 	}
 
-	private static CSVPrinter makeCSVPrinter(String na, String delimiter, String quote) throws IOException {
-
+	private static CsvListWriter makeCsvListWriter(String delimiter, String quote) {
+		
 		if(delimiter.length() != 1) {
 			System.err.println("Delimiter must be a single character got '" + delimiter + "'");
 			throw new RuntimeException();
 		}
 		
-		CSVFormat csvFormat = CSVFormat.EXCEL
-				.withEscape('\\')
-        		.withNullString(na)
-        		.withDelimiter(delimiter.charAt(0))
-        		.withRecordSeparator('\n');
-		
-		if(quote.length() == 1) {
-			csvFormat = csvFormat.withQuote(quote.charAt(0));
-		} else if(quote.length() == 0) {
-			csvFormat = csvFormat.withQuoteMode(QuoteMode.NONE);
-		} else {
+		if(quote.length() != 1) {
 			System.err.println("Quote must be a single character or an empty string for no quoting");
 			throw new RuntimeException();			
 		}
 		
-		BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(System.out));
-
-        CSVPrinter csvPrinter = new CSVPrinter(writer, csvFormat);
-        return csvPrinter;
+		CsvPreference csvFormat = new CsvPreference.Builder(quote.charAt(0), delimiter.charAt(0), "\n")
+				.surroundingSpacesNeedQuotes(false)
+				.build();
+	
+		CsvListWriter listWriter = new CsvListWriter(new OutputStreamWriter(System.out),
+	             csvFormat);
+		return listWriter;
 	}
 	
 	protected static void run(String[] args) throws IOException, InvalidFormatException {
@@ -174,10 +171,11 @@ public class Main {
 		boolean dropEmptyRows = opts.getBoolean("drop_empty_rows");
 		boolean dropEmptyCols = opts.getBoolean("drop_empty_cols");
 		boolean dateAsIso = opts.getBoolean("date_as_iso");
+		boolean noPrefix = opts.getBoolean("no_prefix");
 		List<String> requestSheets = opts.getList("sheet");
 		
-		CSVPrinter csvPrinter = makeCSVPrinter(na, delimiter, quote);
-    
+		CsvListWriter listWriter = makeCsvListWriter(delimiter, quote);
+		
 		for(String excelFile : input) {
 			Workbook wb;
 			try {
@@ -191,13 +189,13 @@ public class Main {
 				String sheetName = wb.getSheetName(i);
 				boolean print = isRequestedSheet(requestSheets, sheetName, wb.getSheetIndex(sheetName));
 				if(print) {
-					printSheet(wb, excelFile, sheetName, csvPrinter, dropEmptyRows, dropEmptyCols, dateAsIso);
+					printSheet(wb, excelFile, sheetName, listWriter, na, dropEmptyRows, dropEmptyCols, dateAsIso, noPrefix);
 				}
 			}
 			
 			wb.close();
 		}
-		csvPrinter.close();
+		listWriter.close();
 	}
 	
 	private static boolean isRequestedSheet(List<String> reqsheets, String sheetName, int sheetIndex) {

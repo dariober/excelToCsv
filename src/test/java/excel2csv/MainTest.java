@@ -4,6 +4,7 @@ import static org.junit.Assert.*;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
@@ -12,8 +13,27 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.junit.Test;
 
+import org.supercsv.io.CsvListWriter;
+import org.supercsv.prefs.CsvPreference;
+
 public class MainTest {
 
+	@Test
+	public void testSuperCSV() throws IOException {
+		
+		CsvPreference csvFormat = new CsvPreference.Builder('"', '|', "\n")
+					.surroundingSpacesNeedQuotes(false)
+					.build();
+		
+		CsvListWriter listWriter = new CsvListWriter(new OutputStreamWriter(System.out),
+                 csvFormat);
+         
+		 String[] record = new String[] {"eggs", "foo, \"bar\"  ", "spam"};
+		 listWriter.write(record);
+		 listWriter.flush();
+		 listWriter.close();
+	}
+	
 	@Test
 	public void testDates() throws InvalidFormatException, IOException {
 		String[] args = "test_data/dates.xlsx".split(" ");
@@ -160,23 +180,23 @@ public class MainTest {
 		List<String> out = this.runMain(args);
 		String stdout = out.get(0);
 		String stderr = out.get(1);
-		assertEquals(0, stderr.length());
-		assertTrue(stdout.contains("\"#HERE!\""));
 		
-		args = new String[] {"-q", "$",  "test_data/simple01.xlsx"};
-		out = this.runMain(args);
-		stdout = out.get(0);
-		stderr = out.get(1);
-		assertEquals(0, stderr.length());
-		assertTrue(stdout.contains("$#HERE!$"));
-		
-		// No quoting
-		args = new String[] {"-q", "",  "test_data/simple01.xlsx"};
-		out = this.runMain(args);
-		stdout = out.get(0);
-		stderr = out.get(1);
 		assertEquals(0, stderr.length());
 		assertTrue(stdout.contains("\t#HERE!\t"));
+
+		args = new String[] {"-q", "#",  "test_data/simple01.xlsx"};
+		out = this.runMain(args);
+		stdout = out.get(0);
+		stderr = out.get(1);
+		assertEquals(0, stderr.length());
+		assertTrue(stdout.contains("\t###HERE!#\t"));
+		
+		args = new String[] {"-d", ",", "test_data/quotes.xlsx"};
+		out = this.runMain(args);
+		stdout = out.get(0);
+		stderr = out.get(1);
+		System.out.println(stdout);
+		assertEquals("test_data/quotes.xlsx,1,Sheet1,eggs,\"Foo, \"\"bar\"\", eggs\",spam with traling space  ,bob", stdout.trim());		
 	}
 	
 	@Test
@@ -184,6 +204,15 @@ public class MainTest {
 		boolean pass = false;
 		try {
 			String[] args = "-q foo test_data/simple01.xlsx".split(" ");
+			this.runMain(args);
+		} catch(RuntimeException e){
+			pass = true;
+		}
+		assertTrue(pass);
+		
+		pass = false;
+		try {
+			String[] args = "-q '' test_data/simple01.xlsx".split(" ");
 			this.runMain(args);
 		} catch(RuntimeException e){
 			pass = true;
@@ -224,6 +253,13 @@ public class MainTest {
 		assertEquals(0, stderr.length());
 		assertEquals(StringUtils.countMatches(stdout, "test_data/simple01.xlsx\t1\tSheet1\t"), 10);
 		assertEquals(StringUtils.countMatches(stdout, "test_data/simple01.xlsx\t2\tSheet2\t"), 4);
+	
+		args = "-p -na NA test_data/simple01.xlsx".split(" ");
+		out = this.runMain(args);
+		stdout = out.get(0);
+		stderr = out.get(1);
+		assertEquals(0, stderr.length());
+		assertTrue(stdout.startsWith("NA\t"));
 	}
 	
 	@Test

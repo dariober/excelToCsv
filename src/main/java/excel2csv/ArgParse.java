@@ -44,7 +44,7 @@ public class ArgParse {
 			.type(String.class)
 			.required(false)
 			.setDefault("\"")
-			.help("Character for quoting or an empty string for no quoting");
+			.help("Character for quoting");
 		
 		parser.addArgument("--sheet", "-s")
 			.type(String.class)
@@ -63,6 +63,10 @@ public class ArgParse {
 		parser.addArgument("--date-as-iso", "-i")
 			.action(Arguments.storeTrue())
 			.help("Convert dates to ISO 8601 format and UTC standard. E.g 2020-03-28T11:40:10Z");
+
+		parser.addArgument("--no-prefix", "-p")
+			.action(Arguments.storeTrue())
+			.help("Do not prefix rows with filename, sheet index, sheet name");
 		
 		parser.addArgument("--version", "-v").action(Arguments.version());
 		

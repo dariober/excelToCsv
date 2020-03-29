@@ -26,7 +26,8 @@ supports **xlsx** and **xls** Excel files. All sheets in each input workbook are
 exported and concatenated to stdout. You can use the first three columns to
 extract specific spreadsheets.
 
-The first three columns of the output CSV are always:
+Unless option `--no-prefix` is set, the first three columns of the output CSV
+are always:
 
 * Source file name
 
@@ -41,16 +42,20 @@ Options
 
 ```
 --delimiter DELIMITER, -d DELIMITER
-                     Column delimiter (default: \t)
+                       Column delimiter (default: \t)
 --na-string NA_STRING, -na NA_STRING
-                     String for missing values (empty cells) (default: )
+                       String for missing values (empty cells) (default: )
 --quote QUOTE, -q QUOTE
-                     Character for quoting or an empty string for no quoting
-                     (default: ")
+                       Character for quoting (default: ")
+--sheet [SHEET [SHEET ...]], -s [SHEET [SHEET ...]]
+                       Optional list of sheet names or sheet indexes to
+                       export (first sheet has index 1)
 --drop-empty-rows, -r  Skip rows with only empty cells (default: false)
 --drop-empty-cols, -c  Skip columns with only empty cells (default: false)
 --date-as-iso, -i      Convert dates to ISO 8601 format and UTC standard. E.g
                        2020-03-28T11:40:10Z (default: false)
+--no-prefix, -p        Do not prefix rows with filename, sheet index, sheet
+                       name (default: false)
 ```
 
 Example usage:
@@ -63,7 +68,16 @@ excel2csv in1.xlsx | awk '$3 == "Sheet1"'
 Installation
 ============
 
-`excel2csv` requires only Java 8 or later.
+`excel2csv` requires only Java 8 or later. There is no need for MS Excel or
+Windows to be available.
+
+There is no installation needed as the jar file from the [released
+zip](https://github.com/dariober/excel2csv/releases/) can be executed as `java
+-jar /path/to/excel2.csv.jar [OPTS]`:
+
+However, on *nix systems it may be more convenient to add the Bash wrapper
+`excel2csv` and the jar file `excel2csv.jar` to a directory on your PATH and
+simply use `excel2csv [OPTS]`. E.g.:
 
 ```
 curl -O https://github.com/dariober/excel2csv/releases/download/vX.Y.Z/excel2csv-x.y.z.zip
