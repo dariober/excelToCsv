@@ -43,17 +43,19 @@ Options
 
 ```
 --delimiter DELIMITER, -d DELIMITER
-                       Column delimiter (default: \t)
+                     Column delimiter (default: ,)
 --na-string NA_STRING, -na NA_STRING
-                       String for missing values (empty cells) (default: )
+                     String for missing values (empty cells) (default: )
 --quote QUOTE, -q QUOTE
-                       Character for quoting (default: ")
---sheet [SHEET [SHEET ...]], -s [SHEET [SHEET ...]]
-                       Optional list of sheet names or sheet indexes to
-                       export (first sheet has index 1)
+                     Character for quoting (default: ")
+--sheet-name SHEET_NAME [SHEET_NAME ...], -sn SHEET_NAME [SHEET_NAME ...]
+                     Optional list of sheet names to export
+--sheet-index SHEET_INDEX [SHEET_INDEX ...], -si SHEET_INDEX [SHEET_INDEX ...]
+                     Optional list of sheet indexes to export (first sheet has
+                     index 1)
 --drop-empty-rows, -r  Skip rows with only empty cells (default: false)
 --drop-empty-cols, -c  Skip columns with only empty cells (default: false)
---date-as-iso, -i      Convert dates to ISO 8601 format and UTC standard. E.g
+--date-as-iso, -I      Convert dates to ISO 8601 format and UTC standard. E.g
                        2020-03-28T11:40:10Z (default: false)
 --no-prefix, -p        Do not prefix rows with filename, sheet index, sheet
                        name (default: false)

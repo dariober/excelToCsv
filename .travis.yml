@@ -10,7 +10,7 @@ script:
     - cat excelToCsv.stub build/libs/excelToCsv.jar > excelToCsv && chmod a+x excelToCsv
     - cp excelToCsv build/libs/
     - ./excelToCsv -h || true
-    - ./excelToCsv test_data/simple01.xlsx
+    - ./excelToCsv -i test_data/simple01.xlsx
     - ./gradlew test jacocoTestReport;
 
 after_success:
