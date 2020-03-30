@@ -62,8 +62,8 @@ Options
 Example usage:
 
 ```
-excelToCsv in1.xlsx in2.xlsx
-excelToCsv in1.xlsx | awk '$3 == "Sheet1"'
+excelToCsv -i in1.xlsx in2.xlsx
+excelToCsv -i in1.xlsx | awk '$3 == "Sheet1"'
 ```
 
 Installation

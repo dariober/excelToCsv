@@ -22,16 +22,16 @@ public class ArgParse {
 				.description("DESCRIPTION\n"
 + "Export Excel files to CSV");
 		
-		parser.addArgument("input")
+		parser.addArgument("--input", "-i")
 			.type(String.class)
-			.required(false)
+			.required(true)
 			.nargs("+")
 			.help("xlsx or xls files to convert");
 
 		parser.addArgument("--delimiter", "-d")
 			.type(String.class)
 			.required(false)
-			.setDefault("\\t")
+			.setDefault(",")
 			.help("Column delimiter");
 
 		parser.addArgument("--na-string", "-na")
@@ -46,12 +46,18 @@ public class ArgParse {
 			.setDefault("\"")
 			.help("Character for quoting");
 		
-		parser.addArgument("--sheet", "-s")
+		parser.addArgument("--sheet-name", "-sn")
 			.type(String.class)
 			.required(false)
-			.nargs("*")
-			.help("Optional list of sheet names or sheet indexes to export (first sheet has index 1)");
-		
+			.nargs("+")
+			.help("Optional list of sheet names to export");
+	
+		parser.addArgument("--sheet-index", "-si")
+			.type(Integer.class)
+			.required(false)
+			.nargs("+")
+			.help("Optional list of sheet indexes to export (first sheet has index 1)");
+			
 		parser.addArgument("--drop-empty-rows", "-r")
 			.action(Arguments.storeTrue())
 			.help("Skip rows with only empty cells");
@@ -60,7 +66,7 @@ public class ArgParse {
 			.action(Arguments.storeTrue())
 			.help("Skip columns with only empty cells");
 		
-		parser.addArgument("--date-as-iso", "-i")
+		parser.addArgument("--date-as-iso", "-I")
 			.action(Arguments.storeTrue())
 			.help("Convert dates to ISO 8601 format and UTC standard. E.g 2020-03-28T11:40:10Z");
 

@@ -72,7 +72,9 @@ public class Main {
 	}
 	
 	private static void printSheet(Workbook wb, String excelFile, String sheetName, 
-			CsvListWriter listWriter, String na, boolean dropEmptyRows, boolean dropEmptyColumns, boolean dateAsIso, boolean noPrefix) throws IOException {
+			CsvListWriter listWriter, String na, boolean dropEmptyRows, 
+			boolean dropEmptyColumns, boolean dateAsIso, 
+			boolean noPrefix) throws IOException {
 
 		FormulaEvaluator fe = wb.getCreationHelper().createFormulaEvaluator();
 		DataFormatter formatter = new DataFormatter();
@@ -105,14 +107,22 @@ public class Main {
 		            Cell cell = row.getCell(c, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);
 		            if ( cell != null ) {
 		                cell = fe.evaluateInCell(cell);
-		                String value;
+		                
+		                String fmtValue = formatter.formatCellValue(cell);
+		                
 		                if(dateAsIso && cell.getCellType().equals(CellType.NUMERIC) && DateUtil.isCellDateFormatted(cell)) {
 		                	Date d = cell.getDateCellValue();
-		                	value = d.toInstant().atZone(ZoneId.of("UTC")).format(DateTimeFormatter.ISO_INSTANT);
+		                	fmtValue = d.toInstant().atZone(ZoneId.of("UTC")).format(DateTimeFormatter.ISO_INSTANT);
+		                } else if(cell.getCellType().equals(CellType.NUMERIC) && cell.getCellStyle().getDataFormatString().equals("General")){
+		                	// For General numeric type: If the formatted value is different from the raw value, use the raw one.
+		                	// This prevents numbers with many digits to be truncated while keeping integers as such. See tests   	
+		                	if( ! ((Double)cell.getNumericCellValue()).equals(Double.valueOf(fmtValue))) {
+		                		fmtValue = Double.toString(cell.getNumericCellValue());
+		                	}
 		                } else {
-		                	value = formatter.formatCellValue(cell);
+		                	// value = formatter.formatCellValue(cell);
 		                }
-		                line.set(c, value);
+		                line.set(c, fmtValue);
 		            } else {
 		            	line.set(c, na);
 		            }
@@ -172,7 +182,22 @@ public class Main {
 		boolean dropEmptyCols = opts.getBoolean("drop_empty_cols");
 		boolean dateAsIso = opts.getBoolean("date_as_iso");
 		boolean noPrefix = opts.getBoolean("no_prefix");
-		List<String> requestSheets = opts.getList("sheet");
+		List<String> reqSheetName = opts.getList("sheet_name");
+		List<Integer> reqSheetIndex = opts.getList("sheet_index");
+
+		if(reqSheetName == null) {
+			reqSheetName = new ArrayList<String>();
+		}
+		if(reqSheetIndex == null) {
+			reqSheetIndex = new ArrayList<Integer>();
+		}
+		
+		for(int i : reqSheetIndex) {
+			if(i <= 0) {
+				System.err.println("Sheet indexes must be >= 1");
+				throw new RuntimeException();
+			}
+		}
 		
 		CsvListWriter listWriter = makeCsvListWriter(delimiter, quote);
 		
@@ -187,7 +212,7 @@ public class Main {
 			
 			for (int i=0; i<wb.getNumberOfSheets(); i++) {
 				String sheetName = wb.getSheetName(i);
-				boolean print = isRequestedSheet(requestSheets, sheetName, wb.getSheetIndex(sheetName));
+				boolean print = isRequestedSheet(reqSheetName, reqSheetIndex, sheetName, wb.getSheetIndex(sheetName));
 				if(print) {
 					printSheet(wb, excelFile, sheetName, listWriter, na, dropEmptyRows, dropEmptyCols, dateAsIso, noPrefix);
 				}
@@ -198,25 +223,16 @@ public class Main {
 		listWriter.close();
 	}
 	
-	private static boolean isRequestedSheet(List<String> reqsheets, String sheetName, int sheetIndex) {
-		if(reqsheets == null || reqsheets.size() == 0) {
+	private static boolean isRequestedSheet(List<String> reqSheetName, List<Integer> reqSheetIndex, String sheetName, int sheetIndex) {
+		
+		if(reqSheetName.size() == 0 && reqSheetIndex.size() == 0) {
 			return true;
 		}
-		if(reqsheets.contains(sheetName)) {
+		if(reqSheetName.contains(sheetName) || reqSheetIndex.contains(sheetIndex+1)) {
 			return true;
+		} else {
+			return false;
 		}
-		for(String x : reqsheets) {
-			int idx;
-			try {
-				idx = Integer.parseInt(x) - 1;
-				if(idx == sheetIndex) {
-					return true;
-				}
-			} catch( NumberFormatException e) {
-				//
-			}
-		}
-		return false;
 	}
 
 	public static void main(String[] args) throws IOException, InvalidFormatException {
