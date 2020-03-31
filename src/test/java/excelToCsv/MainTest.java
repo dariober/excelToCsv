@@ -21,12 +21,12 @@ public class MainTest {
 		String stderr = out.get(1);
 		String stdout = out.get(0);
 		assertEquals(0, stderr.length());
-		System.out.println(stdout);
 		assertTrue(stdout.contains(",2.66666156237642,"));
 		assertTrue(stdout.contains(",5.33332312475284,"));
 		assertTrue(stdout.contains(",60,"));
-		// When exporting with Excel, this number does not switch to scientific notation
-		assertTrue(stdout.contains(",1.30316679844963E-4,")); 
+		assertTrue(stdout.contains(",0.000130316679844963,")); 
+		assertTrue(stdout.contains(",2.7,"));
+		assertTrue(stdout.contains(",2.67E+00,"));
 	}
 	
 	@Test

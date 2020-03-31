@@ -1,0 +1,192 @@
+as.POSIX*                 package:base                 R Documentation
+
+_D_a_t_e-_t_i_m_e _C_o_n_v_e_r_s_i_o_n _F_u_n_c_t_i_o_n_s
+
+_D_e_s_c_r_i_p_t_i_o_n:
+
+     Functions to manipulate objects of classes ‘"POSIXlt"’ and
+     ‘"POSIXct"’ representing calendar dates and times.
+
+_U_s_a_g_e:
+
+     as.POSIXct(x, tz = "", ...)
+     as.POSIXlt(x, tz = "", ...)
+     
+     ## S3 method for class 'character'
+     as.POSIXlt(x, tz = "", format,
+                tryFormats = c("%Y-%m-%d %H:%M:%OS",
+                               "%Y/%m/%d %H:%M:%OS",
+                               "%Y-%m-%d %H:%M",
+                               "%Y/%m/%d %H:%M",
+                               "%Y-%m-%d",
+                               "%Y/%m/%d"),
+                optional = FALSE, ...)
+     ## Default S3 method:
+     as.POSIXlt(x, tz = "",
+                optional = FALSE, ...)
+     ## S3 method for class 'numeric'
+     as.POSIXlt(x, tz = "", origin, ...)
+     
+     ## S3 method for class 'POSIXlt'
+     as.double(x, ...)
+     
+_A_r_g_u_m_e_n_t_s:
+
+       x: R object to be converted.
+
+      tz: time zone specification to be used for the conversion, _if
+          one is required_.  System-specific (see time zones), but ‘""’
+          is the current time zone, and ‘"GMT"’ is UTC (Universal Time,
+          Coordinated).  Invalid values are most commonly treated as
+          UTC, on some platforms with a warning.
+
+     ...: further arguments to be passed to or from other methods.
+
+  format: character string giving a date-time format as used by
+          ‘strptime’.
+
+tryFormats: ‘character’ vector of ‘format’ strings to try if ‘format’
+          is not specified.
+
+optional: ‘logical’ indicating to return ‘NA’ (instead of signalling an
+          error) if the format guessing does not succeed.
+
+  origin: a date-time object, or something which can be coerced by
+          ‘as.POSIXct(tz = "GMT")’ to such an object.
+
+_D_e_t_a_i_l_s:
+
+     The ‘as.POSIX*’ functions convert an object to one of the two
+     classes used to represent date/times (calendar dates plus time to
+     the nearest second).  They can convert a wide variety of objects,
+     including objects of the other class and of classes ‘"Date"’,
+     ‘"date"’ (from package ‘date’), ‘"chron"’ and ‘"dates"’ (from
+     package ‘chron’) to these classes.  Dates without times are
+     treated as being at midnight UTC.
+
+     They can also convert character strings of the formats
+     ‘"2001-02-03"’ and ‘"2001/02/03"’ optionally followed by white
+     space and a time in the format ‘"14:52"’ or ‘"14:52:03"’.
+     (Formats such as ‘"01/02/03"’ are ambiguous but can be converted
+     via a format specification by ‘strptime’.)  Fractional seconds are
+     allowed.  Alternatively, ‘format’ can be specified for character
+     vectors or factors: if it is not specified and no standard format
+     works for all non-‘NA’ inputs an error is thrown.
+
+     If ‘format’ is specified, remember that some of the format
+     specifications are locale-specific, and you may need to set the
+     ‘LC_TIME’ category appropriately _via_ ‘Sys.setlocale’.  This most
+     often affects the use of ‘%b’, ‘%B’ (month names) and ‘%p’
+     (AM/PM).
+
+     Logical ‘NA’s can be converted to either of the classes, but no
+     other logical vectors can be.
+
+     If you are given a numeric time as the number of seconds since an
+     epoch, see the examples.
+
+     Character input is first converted to class ‘"POSIXlt"’ by
+     ‘strptime’: numeric input is first converted to ‘"POSIXct"’.  Any
+     conversion that needs to go between the two date-time classes
+     requires a time zone: conversion from ‘"POSIXlt"’ to ‘"POSIXct"’
+     will validate times in the selected time zone.  One issue is what
+     happens at transitions to and from DST, for example in the UK
+     
+     as.POSIXct(strptime("2011-03-27 01:30:00", "%Y-%m-%d %H:%M:%S"))
+     as.POSIXct(strptime("2010-10-31 01:30:00", "%Y-%m-%d %H:%M:%S"))
+
+     are respectively invalid (the clocks went forward at 1:00 GMT to
+     2:00 BST) and ambiguous (the clocks went back at 2:00 BST to 1:00
+     GMT).  What happens in such cases is OS-specific: one should
+     expect the first to be ‘NA’, but the second could be interpreted
+     as either BST or GMT (and common OSes give both possible values).
+     Note too (see ‘strftime’) that OS facilities may not format
+     invalid times correctly.
+
+_V_a_l_u_e:
+
+     ‘as.POSIXct’ and ‘as.POSIXlt’ return an object of the appropriate
+     class.  If ‘tz’ was specified, ‘as.POSIXlt’ will give an
+     appropriate ‘"tzone"’ attribute.  Date-times known to be invalid
+     will be returned as ‘NA’.
+
+_N_o_t_e:
+
+     Some of the concepts used have to be extended backwards in time
+     (the usage is said to be ‘proleptic’).  For example, the origin of
+     time for the ‘"POSIXct"’ class, ‘1970-01-01 00:00.00 UTC’, is
+     before UTC was defined.  More importantly, conversion is done
+     assuming the Gregorian calendar which was introduced in 1582 and
+     not used universally until the 20th century.  One of the
+     re-interpretations assumed by ISO 8601:2004 is that there was a
+     year zero, even though current year numbering (and zero) is a much
+     later concept (525 AD for year numbers from 1 AD).
+
+     If you want to extract specific aspects of a time (such as the day
+     of the week) just convert it to class ‘"POSIXlt"’ and extract the
+     relevant component(s) of the list, or if you want a character
+     representation (such as a named day of the week) use the ‘format’
+     method.
+
+     If a time zone is needed and that specified is invalid on your
+     system, what happens is system-specific but attempts to set it
+     will probably be ignored.
+
+     Conversion from character needs to find a suitable format unless
+     one is supplied (by trying common formats in turn): this can be
+     slow for long inputs.
+
+_S_e_e _A_l_s_o:
+
+     DateTimeClasses for details of the classes; ‘strptime’ for
+     conversion to and from character representations.
+
+     ‘Sys.timezone’ for details of the (system-specific) naming of time
+     zones.
+
+     locales for locale-specific aspects.
+
+_E_x_a_m_p_l_e_s:
+
+     (z <- Sys.time())             # the current datetime, as class "POSIXct"
+     unclass(z)                    # a large integer
+     floor(unclass(z)/86400)       # the number of days since 1970-01-01 (UTC)
+     (now <- as.POSIXlt(Sys.time())) # the current datetime, as class "POSIXlt"
+     unlist(unclass(now))          # a list shown as a named vector
+     now$year + 1900               # see ?DateTimeClasses
+     months(now); weekdays(now)    # see ?months
+     
+     ## suppose we have a time in seconds since 1960-01-01 00:00:00 GMT
+     ## (the origin used by SAS)
+     z <- 1472562988
+     # ways to convert this
+     as.POSIXct(z, origin = "1960-01-01")                # local
+     as.POSIXct(z, origin = "1960-01-01", tz = "GMT")    # in UTC
+     
+     ## SPSS dates (R-help 2006-02-16)
+     z <- c(10485849600, 10477641600, 10561104000, 10562745600)
+     as.Date(as.POSIXct(z, origin = "1582-10-14", tz = "GMT"))
+     
+     ## Stata date-times: milliseconds since 1960-01-01 00:00:00 GMT
+     ## format %tc excludes leap-seconds, assumed here
+     ## For format %tC including leap seconds, see foreign::read.dta()
+     z <- 1579598122120
+     op <- options(digits.secs = 3)
+     # avoid rounding down: milliseconds are not exactly representable
+     as.POSIXct((z+0.1)/1000, origin = "1960-01-01")
+     options(op)
+     
+     ## Matlab 'serial day number' (days and fractional days)
+     z <- 7.343736909722223e5 # 2010-08-23 16:35:00
+     as.POSIXct((z - 719529)*86400, origin = "1970-01-01", tz = "UTC")
+     
+     as.POSIXlt(Sys.time(), "GMT") # the current time in UTC
+     
+     ## These may not be correct names on your system
+     as.POSIXlt(Sys.time(), "America/New_York")  # in New York
+     as.POSIXlt(Sys.time(), "EST5EDT")           # alternative.
+     as.POSIXlt(Sys.time(), "EST" )   # somewhere in Eastern Canada
+     as.POSIXlt(Sys.time(), "HST")    # in Hawaii
+     as.POSIXlt(Sys.time(), "Australia/Darwin")
+     
+

@@ -23,6 +23,7 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
+import org.apache.poi.ss.util.NumberToTextConverter;
 import org.supercsv.io.CsvListWriter;
 import org.supercsv.prefs.CsvPreference;
 
@@ -114,11 +115,7 @@ public class Main {
 		                	Date d = cell.getDateCellValue();
 		                	fmtValue = d.toInstant().atZone(ZoneId.of("UTC")).format(DateTimeFormatter.ISO_INSTANT);
 		                } else if(cell.getCellType().equals(CellType.NUMERIC) && cell.getCellStyle().getDataFormatString().equals("General")){
-		                	// For General numeric type: If the formatted value is different from the raw value, use the raw one.
-		                	// This prevents numbers with many digits to be truncated while keeping integers as such. See tests   	
-		                	if( ! ((Double)cell.getNumericCellValue()).equals(Double.valueOf(fmtValue))) {
-		                		fmtValue = Double.toString(cell.getNumericCellValue());
-		                	}
+		                	fmtValue = NumberToTextConverter.toText(cell.getNumericCellValue());
 		                } else {
 		                	// value = formatter.formatCellValue(cell);
 		                }
