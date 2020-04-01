@@ -4,17 +4,13 @@ import java.io.File;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.nio.file.Files;
-import java.text.DecimalFormat;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.regex.Pattern;
-
 import org.apache.commons.text.StringEscapeUtils;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.poifs.filesystem.NotOLE2FileException;
@@ -76,36 +72,6 @@ public class Main {
 		return emptyIdx;
 	}
 	
-	/**If x is a decimal of the form 1234.1234, truncate it to 15 decimal places in
-	 * order to comply with Excel exporter*/
-	private static String javaToExcelDecimal(String x) {
-		if(Pattern.compile("^-{0,1}\\d+\\.\\d+$").matcher(x).find()) {
-			String[] parts = x.split("\\.");
-			if(parts[1].length() > 15) {
-				
-				Double d = Double.valueOf(x);
-				if(parts[1].charAt(15) == '5') {
-					// Force rounding mode UP
-					if(d < 0) {
-						d -= 0.0000000000000001;						
-					} else {
-						d += 0.0000000000000001;
-					}
-				}
-				
-				String intFmt = String.join("", Collections.nCopies(parts[0].length(), "#"));
-				String decFmt = String.join("", Collections.nCopies(15, "#"));
-				DecimalFormat df = new DecimalFormat(intFmt + "." + decFmt);
-				String y = df.format(d);
-				return y;
-			} else {
-				return x;
-			}
-		} else {
-			return x;
-		}
-	}
-	
 	private static void printSheet(Workbook wb, String excelFile, String sheetName, 
 			CsvListWriter listWriter, String na, boolean dropEmptyRows, 
 			boolean dropEmptyColumns, boolean dateAsIso, 
@@ -150,7 +116,6 @@ public class Main {
 		                	fmtValue = d.toInstant().atZone(ZoneId.of("UTC")).format(DateTimeFormatter.ISO_INSTANT);
 		                } else if(cell.getCellType().equals(CellType.NUMERIC) && cell.getCellStyle().getDataFormatString().equals("General")){
 		                	fmtValue = NumberToTextConverter.toText(cell.getNumericCellValue());
-		                	fmtValue = javaToExcelDecimal(fmtValue);
 		                } else {
 		                	// value = formatter.formatCellValue(cell);
 		                }

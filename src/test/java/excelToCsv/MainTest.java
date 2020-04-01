@@ -26,10 +26,7 @@ public class MainTest {
 		assertTrue(stdout.contains(",2.66666156237642,"));
 		assertTrue(stdout.contains(",5.33332312475284,"));
 		assertTrue(stdout.contains(",60,"));
-		assertTrue(stdout.contains(",0.014829049473106,"));
-		assertTrue(stdout.contains(",-0.003605071259578,"));
-		assertTrue(stdout.contains(",0.000338847568185,")); // 0.000338847568184501
-		assertTrue(stdout.contains(",-0.086737078674609,"));
+		assertTrue(stdout.contains(",0.0148290494731055,"));
 		assertTrue(stdout.contains(",2.7,"));
 		assertTrue(stdout.contains(",2.67E+00,"));
 	}

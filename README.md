@@ -95,8 +95,8 @@ Similar programs
 There are a number of Excel-to-CSV exporters. I found this
 [excel2csv](https://github.com/informationsea/excel2csv) when I already wrote
 mine also based on the Java POI package which seems pretty good. My solution
-may be a bit more versatile for example when converting multiple files and
-sheets and it should be closer to the manual export done with Excel.
+may be a bit more versatile for when converting multiple files and
+sheets and it prevents some data loss with handling decimals.
 
 I think converters based on Python packages like pandas, xlrd or openpyxl
 cannot faithfully convert the content of MS Excel (see for example this
