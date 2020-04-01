@@ -16,15 +16,20 @@ public class MainTest {
 	
 	@Test
 	public void testGeneralFormat() throws InvalidFormatException, IOException {
+		
 		String[] args = new String[] {"-d",  ",", "-i", "test_data/format.xlsx"};
 		List<String> out = this.runMain(args);
 		String stderr = out.get(1);
 		String stdout = out.get(0);
 		assertEquals(0, stderr.length());
+		System.out.println(stdout);
 		assertTrue(stdout.contains(",2.66666156237642,"));
 		assertTrue(stdout.contains(",5.33332312475284,"));
 		assertTrue(stdout.contains(",60,"));
-		assertTrue(stdout.contains(",0.000130316679844963,")); 
+		assertTrue(stdout.contains(",0.014829049473106,"));
+		assertTrue(stdout.contains(",-0.003605071259578,"));
+		assertTrue(stdout.contains(",0.000338847568185,")); // 0.000338847568184501
+		assertTrue(stdout.contains(",-0.086737078674609,"));
 		assertTrue(stdout.contains(",2.7,"));
 		assertTrue(stdout.contains(",2.67E+00,"));
 	}

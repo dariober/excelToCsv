@@ -75,7 +75,8 @@ Installation
 
 * Download and unzip the latest [release](https://github.com/dariober/excelToCsv/releases/) 
 
-* On Linux/Unix simply execute `excelToCsv [OPTS]`, on other system use `java -jar excelToCsv.jar [OPTS]`
+* On Linux/Unix simply execute `excelToCsv [OPTS]`, on other systems where
+  Bash/sh is not available use `java -jar excelToCsv.jar [OPTS]`
 
 That is:
 
@@ -95,10 +96,10 @@ There are a number of Excel-to-CSV exporters. I found this
 [excel2csv](https://github.com/informationsea/excel2csv) when I already wrote
 mine also based on the Java POI package which seems pretty good. My solution
 may be a bit more versatile for example when converting multiple files and
-sheets.
+sheets and it should be closer to the manual export done with Excel.
 
-I think converters based on Python packages like pandas, xlrd or openpyxl cannot
-faithfully convert the content of MS Excel (see for example this
+I think converters based on Python packages like pandas, xlrd or openpyxl
+cannot faithfully convert the content of MS Excel (see for example this
 [question](https://stackoverflow.com/questions/60802014/how-to-consistently-handle-excel-boolean-with-pandas)
 of mine).
 
