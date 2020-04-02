@@ -18,7 +18,7 @@ Description & Usage
 ===========
 
 Every time you use Excel to share data a kitten dies. However, if Excel is what
-you have been given, you have to deal with it and one of the first things you
+you have been given, you have to deal with it. One of the first things you
 may want to do is to export the data to Comma-Separated Values
 ([CSV](https://en.wikipedia.org/wiki/Comma-separated_values)) files.
 
@@ -39,13 +39,14 @@ programs:
 
 * With `--no-format` prevent data loss (*e.g.* avoid 0.0123 to be exported as
   1E-02) and make numbers as numeric strings (*e.g.* 1,000,000 is exported as
-  1000000). Without `--no-format` (default), cells are exported as formtted by
-  user (WYSIWYG)
+  1000000). Without `--no-format` (default), cells are exported as formatted by
+  the user (WYSIWYG)
 
 * With `--date-as-iso` - convert dates in (possibly many, inconsistent) different
   formats to ISO
 
-* Weaker dependency (Java 1.8+) as compared to Python, Perl, R solutions 
+* Weaker dependency (Java 1.8+) and no installation needed compared to Python,
+  Perl, R solutions 
 
 Unless option `--no-prefix` is set, the first three columns of the output CSV
 are always:
