@@ -68,11 +68,19 @@ public class ArgParse {
 		
 		parser.addArgument("--date-as-iso", "-I")
 			.action(Arguments.storeTrue())
-			.help("Convert dates to ISO 8601 format and UTC standard. E.g 2020-03-28T11:40:10Z");
+			.help("Convert dates to ISO 8601 format and UTC standard.\n"
+					+ "E.g 2020-03-28T11:40:10Z");
 
+		parser.addArgument("--no-format", "-f")
+			.action(Arguments.storeTrue())
+			.help("For numeric cells, return values without formatting.\n"
+					+ "This prevents loss of data and gives parsable numeric\n"
+					+ "strings");
+		
 		parser.addArgument("--no-prefix", "-p")
 			.action(Arguments.storeTrue())
-			.help("Do not prefix rows with filename, sheet index, sheet name");
+			.help("Do not prefix rows with filename, sheet index,\n"
+					+ "sheet name");
 		
 		parser.addArgument("--version", "-v").action(Arguments.version());
 		

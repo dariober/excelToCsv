@@ -75,7 +75,7 @@ public class Main {
 	private static void printSheet(Workbook wb, String excelFile, String sheetName, 
 			CsvListWriter listWriter, String na, boolean dropEmptyRows, 
 			boolean dropEmptyColumns, boolean dateAsIso, 
-			boolean noPrefix) throws IOException {
+			boolean noPrefix, boolean noFormat) throws IOException {
 
 		FormulaEvaluator fe = wb.getCreationHelper().createFormulaEvaluator();
 		DataFormatter formatter = new DataFormatter();
@@ -109,16 +109,8 @@ public class Main {
 		            if ( cell != null ) {
 		                cell = fe.evaluateInCell(cell);
 		                
-		                String fmtValue = formatter.formatCellValue(cell);
+		                String fmtValue = formatCellValue(cell, dateAsIso, noFormat, formatter);
 		                
-		                if(dateAsIso && cell.getCellType().equals(CellType.NUMERIC) && DateUtil.isCellDateFormatted(cell)) {
-		                	Date d = cell.getDateCellValue();
-		                	fmtValue = d.toInstant().atZone(ZoneId.of("UTC")).format(DateTimeFormatter.ISO_INSTANT);
-		                } else if(cell.getCellType().equals(CellType.NUMERIC) && cell.getCellStyle().getDataFormatString().equals("General")){
-		                	fmtValue = NumberToTextConverter.toText(cell.getNumericCellValue());
-		                } else {
-		                	// value = formatter.formatCellValue(cell);
-		                }
 		                line.set(c, fmtValue);
 		            } else {
 		            	line.set(c, na);
@@ -160,6 +152,30 @@ public class Main {
 		return listWriter;
 	}
 	
+	private static String formatCellValue(Cell cell, boolean dateAsIso, boolean noFormat, DataFormatter formatter) {
+
+		String fmtValue = formatter.formatCellValue(cell);
+		
+		if(! cell.getCellType().equals(CellType.NUMERIC) ) {
+			return fmtValue;
+		}
+		
+        if(DateUtil.isCellDateFormatted(cell)) {
+        	if(dateAsIso) {
+	        	Date d = cell.getDateCellValue();
+	        	return d.toInstant().atZone(ZoneId.of("UTC")).format(DateTimeFormatter.ISO_INSTANT);
+        	} else {
+        		return fmtValue;
+        	}
+        } 
+		
+        if(noFormat || cell.getCellStyle().getDataFormatString().equals("General")) {
+        	return NumberToTextConverter.toText(cell.getNumericCellValue());
+        } else {
+			return fmtValue;        	
+        }
+	}
+	
 	protected static void run(String[] args) throws IOException, InvalidFormatException {
 		Namespace opts= ArgParse.argParse(args);
 
@@ -179,6 +195,7 @@ public class Main {
 		boolean dropEmptyCols = opts.getBoolean("drop_empty_cols");
 		boolean dateAsIso = opts.getBoolean("date_as_iso");
 		boolean noPrefix = opts.getBoolean("no_prefix");
+		boolean noFormat = opts.getBoolean("no_format");
 		List<String> reqSheetName = opts.getList("sheet_name");
 		List<Integer> reqSheetIndex = opts.getList("sheet_index");
 
@@ -211,7 +228,8 @@ public class Main {
 				String sheetName = wb.getSheetName(i);
 				boolean print = isRequestedSheet(reqSheetName, reqSheetIndex, sheetName, wb.getSheetIndex(sheetName));
 				if(print) {
-					printSheet(wb, excelFile, sheetName, listWriter, na, dropEmptyRows, dropEmptyCols, dateAsIso, noPrefix);
+					printSheet(wb, excelFile, sheetName, listWriter, na, 
+							dropEmptyRows, dropEmptyCols, dateAsIso, noPrefix, noFormat);
 				}
 			}
 			

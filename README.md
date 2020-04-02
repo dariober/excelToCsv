@@ -27,6 +27,26 @@ supports **xlsx** and **xls** Excel files. All sheets in each input workbook are
 exported and concatenated to stdout. You can use the first three columns to
 extract specific spreadsheets.
 
+Some perks of `excelToCsv` compared to manual export from Excel and similar
+programs:
+
+* No need of MS Excel at all - useful on computer clusters
+
+* Easy to automate - Exporting even few sheets from few files, say 3x3, can be
+  a pain and it is error prone. `excelToCsv` exports in batch and
+  since each row is prefixed with file and sheet name, it's easy to do further
+  filtering with your favourite tool
+
+* With `--no-format` prevent data loss (*e.g.* avoid 0.0123 to be exported as
+  1E-02) and make numbers as numeric strings (*e.g.* 1,000,000 is exported as
+  1000000). Without `--no-format` (default), cells are exported as formtted by
+  user (WYSIWYG)
+
+* With `--date-as-iso` - convert dates in (possibly many, inconsistent) different
+  formats to ISO
+
+* Weaker dependency (Java 1.8+) as compared to Python, Perl, R solutions 
+
 Unless option `--no-prefix` is set, the first three columns of the output CSV
 are always:
 
@@ -41,7 +61,11 @@ So the actual data starts at column 4.
 Options
 -------
 
+(Use `excelToCsv -h` for help)
+
 ```
+--input INPUT [INPUT ...], -i INPUT [INPUT ...]
+                     xlsx or xls files to convert
 --delimiter DELIMITER, -d DELIMITER
                      Column delimiter (default: ,)
 --na-string NA_STRING, -na NA_STRING
@@ -51,14 +75,16 @@ Options
 --sheet-name SHEET_NAME [SHEET_NAME ...], -sn SHEET_NAME [SHEET_NAME ...]
                      Optional list of sheet names to export
 --sheet-index SHEET_INDEX [SHEET_INDEX ...], -si SHEET_INDEX [SHEET_INDEX ...]
-                     Optional list of sheet indexes to export (first sheet has
-                     index 1)
+                     Optional list of sheet indexes to export (first sheet has index 1)
 --drop-empty-rows, -r  Skip rows with only empty cells (default: false)
 --drop-empty-cols, -c  Skip columns with only empty cells (default: false)
---date-as-iso, -I      Convert dates to ISO 8601 format and UTC standard. E.g
-                       2020-03-28T11:40:10Z (default: false)
---no-prefix, -p        Do not prefix rows with filename, sheet index, sheet
-                       name (default: false)
+--date-as-iso, -I    Convert dates to ISO 8601 format and UTC standard.
+                     E.g 2020-03-28T11:40:10Z (default: false)
+--no-format, -f      For numeric cells, return values without formatting.
+                     This prevents loss of data and gives parsable numeric
+                     strings (default: false)
+--no-prefix, -p       Do not prefix rows with filename, sheet index,
+                     sheet name (default: false)
 ```
 
 Example usage:

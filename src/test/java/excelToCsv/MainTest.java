@@ -15,20 +15,37 @@ import org.junit.Test;
 public class MainTest {
 	
 	@Test
-	public void testGeneralFormat() throws InvalidFormatException, IOException {
+	public void testNoFormat() throws InvalidFormatException, IOException {
+		
+		String[] args = new String[] {"-d",  ",", "-f", "-i", "test_data/format.xlsx"};
+		List<String> out = this.runMain(args);
+		String stderr = out.get(1);
+		String stdout = out.get(0);
+		assertEquals(0, stderr.length());
+		assertTrue(stdout.contains(",60,"));
+		assertTrue(stdout.contains(",200.666661562376,"));
+		assertTrue(stdout.contains(",21/03/20,"));
+		assertTrue(stdout.contains(",TRUE,"));
+		assertTrue(stdout.contains(",1.23,"));
+	}
+	
+	@Test
+	public void testFormat() throws InvalidFormatException, IOException {
 		
 		String[] args = new String[] {"-d",  ",", "-i", "test_data/format.xlsx"};
 		List<String> out = this.runMain(args);
 		String stderr = out.get(1);
 		String stdout = out.get(0);
 		assertEquals(0, stderr.length());
-		System.out.println(stdout);
 		assertTrue(stdout.contains(",2.66666156237642,"));
 		assertTrue(stdout.contains(",5.33332312475284,"));
 		assertTrue(stdout.contains(",60,"));
 		assertTrue(stdout.contains(",0.0148290494731055,"));
 		assertTrue(stdout.contains(",2.7,"));
-		assertTrue(stdout.contains(",2.67E+00,"));
+		assertTrue(stdout.contains(",2.01E+02,"));
+		assertTrue(stdout.contains(",TRUE,"));
+		assertTrue(stdout.contains(",21/03/20,"));
+		assertTrue(stdout.contains(",123.00%,"));
 	}
 	
 	@Test
@@ -285,6 +302,7 @@ public class MainTest {
 		List<String> out = this.runMain(args);
 		String stdout = out.get(0);
 		String stderr = out.get(1);
+		
 		assertEquals(0, stderr.length());
 		assertEquals(1, StringUtils.countMatches(stdout, ",3.33,"));
 	}
