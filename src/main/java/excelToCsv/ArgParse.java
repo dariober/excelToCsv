@@ -9,7 +9,7 @@ import net.sourceforge.argparse4j.inf.Namespace;
 public class ArgParse {
     
     public static String PROG_NAME= "excelToCsv";
-    public static String VERSION= "0.1.0";
+    public static String VERSION= "0.1.1";
     
     /* Parse command line args */
     public static Namespace argParse(String[] args){

@@ -108,10 +108,7 @@ Installation
 That is:
 
 ```
-curl -O https://github.com/dariober/excelToCsv/releases/download/vX.Y.Z/excelToCsv-x.y.z.zip
-unzip excelToCsv-x.y.z.zip
-
-cd excelToCsv-x.y.z/
+curl -O https://github.com/dariober/excelToCsv/releases/download/vX.Y.Z/excelToCsv
 chmod a+x excelToCsv
 cp excelToCsv /usr/local/bin/     # Or else in your PATH e.g. ~/bin/
 ```
@@ -157,28 +154,16 @@ Inspect coverage by opening `build/reports/jacoco/test/html/index.html`
 Cut new release
 ---------------
 
-Prepare a zip file containing the jar file, the helper bash script and other
-files the user may find useful (*e.g.* this README file). Upload this zip file
-to GitHub as a new release.
+Upload to GitHub the bash file with embedded the jar and jar file itself as new
+release. 
+
+Make sure the release tag matches the VERSION string in `ArgParse.java`.
 
 ```
 cd ~/git_repos/excelToCsv ## Or wherever the latest local dir is
 
 ./gradlew build
 
-VERSION='0.1.0' # To match ArgParse.VERSION
-
-mkdir excelToCsv-${VERSION}
-
-## Copy helper script and jar file to future zip dir
-cat excelToCsv.stub build/libs/excelToCsv.jar > excelToCsv-${VERSION}/excelToCsv && chmod a+x excelToCsv-${VERSION}/excelToCsv
-
-excelToCsv-${VERSION}/excelToCsv -h ## Check it works ok
-
-cp build/libs/excelToCsv.jar excelToCsv-${VERSION}/
-cp README.md excelToCsv-${VERSION}/
-
-## Zip up
-zip -r excelToCsv-${VERSION}.zip excelToCsv-${VERSION}
-rm -r excelToCsv-${VERSION}
+cat excelToCsv.stub build/libs/excelToCsv.jar > excelToCsv
+excelToCsv -h ## Check it works ok
 ```

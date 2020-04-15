@@ -1,6 +1,7 @@
 package excelToCsv;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.nio.file.Files;
@@ -13,7 +14,6 @@ import java.util.List;
 import java.util.Set;
 import org.apache.commons.text.StringEscapeUtils;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
-import org.apache.poi.poifs.filesystem.NotOLE2FileException;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.DataFormatter;
@@ -231,8 +231,8 @@ public class Main {
         for(String excelFile : input) {
             Workbook wb;
             try {
-                wb = WorkbookFactory.create(new File(excelFile));
-            } catch(NotOLE2FileException e) {
+                wb = WorkbookFactory.create(new FileInputStream(excelFile));
+            } catch(IOException e) {
                 System.err.println("File '" + excelFile + "' is not a valid Excel document");
                 throw new RuntimeException();
             }
