@@ -139,7 +139,7 @@ public class MainTest {
         assertEquals(14, rows.length);
         for(String row : rows) {
             if(row.contains("Sheet1")) {
-                assertEquals(3+7, row.split(",").length);
+                assertEquals(4+7, row.split(",").length);
             }
         }
     }
@@ -218,8 +218,7 @@ public class MainTest {
         out = this.runMain(args);
         stdout = out.get(0);
         stderr = out.get(1);
-        System.out.println(stdout);
-        assertEquals("test_data/quotes.xlsx,1,Sheet1,eggs,\"Foo, \"\"bar\"\", eggs\",spam with traling space  ,bob", stdout.trim());        
+        assertEquals("test_data/quotes.xlsx,1,Sheet1,1,eggs,\"Foo, \"\"bar\"\", eggs\",spam with traling space  ,bob", stdout.trim());        
     }
     
     @Test
@@ -274,6 +273,10 @@ public class MainTest {
         String stdout = out.get(0);
         String stderr = out.get(1);
         assertEquals(0, stderr.length());
+        assertTrue(stdout.contains("test_data/simple01.xlsx,1,Sheet1,1,"));
+        assertTrue(stdout.contains("test_data/simple01.xlsx,1,Sheet1,8,"));
+        assertTrue(stdout.contains("test_data/simple01.xlsx,2,Sheet2,1,"));
+        assertTrue(stdout.contains("test_data/simple01.xlsx,2,Sheet2,4,"));
         assertEquals(StringUtils.countMatches(stdout, "test_data/simple01.xlsx,1,Sheet1,"), 10);
         assertEquals(StringUtils.countMatches(stdout, "test_data/simple01.xlsx,2,Sheet2,"), 4);
     
@@ -325,7 +328,7 @@ public class MainTest {
         String stderr = out.get(1);
         assertEquals(0, stderr.length());
         assertTrue( ! stdout.contains("test_data/empty_cols.xlsx,1,Sheet1,,,,,"));
-        assertTrue(stdout.contains("test_data/empty_cols.xlsx,1,Sheet1,,2.66666156237642,,,"));
+        assertTrue(stdout.contains("test_data/empty_cols.xlsx,1,Sheet1,4,,2.66666156237642,,,"));
     }
     
     @Test
@@ -335,8 +338,8 @@ public class MainTest {
         String stdout = out.get(0);
         String stderr = out.get(1);
         assertEquals(0, stderr.length());
-        assertTrue(stdout.contains("test_data/empty_cols.xlsx|1|Sheet1|||"));
-        assertTrue(stdout.contains("test_data/empty_cols.xlsx|1|Sheet1|a|e|h"));
+        assertTrue(stdout.contains("test_data/empty_cols.xlsx|1|Sheet1|1|||"));
+        assertTrue(stdout.contains("test_data/empty_cols.xlsx|1|Sheet1|5|a|e|h"));
     }
     
     /** Execute main with the given array of arguments and return a list of length 2 containing 1) stdout and 2) stderr.

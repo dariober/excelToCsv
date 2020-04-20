@@ -8,7 +8,7 @@
 * [Description & Usage](#description--usage)
     * [Options](#options)
 * [Installation](#installation)
-    * [Similar programs](#similar-programs)
+* [Similar programs](#similar-programs)
 * [Developer](#developer)
     * [Cut new release](#cut-new-release)
 
@@ -48,7 +48,7 @@ programs:
 * Weaker dependency (Java 1.8+) and no installation needed compared to Python,
   Perl, R solutions 
 
-Unless option `--no-prefix` is set, the first three columns of the output CSV
+Unless option `-p/--no-prefix` is set, the first four columns of the output CSV
 are always:
 
 * Source file name
@@ -57,7 +57,9 @@ are always:
 
 * Name of the exported spreadsheet
 
-So the actual data starts at column 4.
+* Row number (1-based)
+
+So the actual data starts at column 5.
 
 Options
 -------
@@ -114,7 +116,7 @@ cp excelToCsv /usr/local/bin/     # Or else in your PATH e.g. ~/bin/
 ```
 
 Similar programs
-----------------
+================
 
 There are a number of Excel-to-CSV exporters. I found this
 [excel2csv](https://github.com/informationsea/excel2csv) when I already wrote
@@ -165,5 +167,6 @@ cd ~/git_repos/excelToCsv ## Or wherever the latest local dir is
 ./gradlew build
 
 cat excelToCsv.stub build/libs/excelToCsv.jar > excelToCsv
-excelToCsv -h ## Check it works ok
+chmod a+x excelToCsv
+./excelToCsv -v ## Check it works ok
 ```

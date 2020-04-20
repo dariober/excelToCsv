@@ -9,7 +9,7 @@ import net.sourceforge.argparse4j.inf.Namespace;
 public class ArgParse {
     
     public static String PROG_NAME= "excelToCsv";
-    public static String VERSION= "0.1.1";
+    public static String VERSION= "0.2.0";
     
     /* Parse command line args */
     public static Namespace argParse(String[] args){
@@ -79,7 +79,7 @@ public class ArgParse {
         parser.addArgument("--no-prefix", "-p")
             .action(Arguments.storeTrue())
             .help("Do not prefix rows with filename, sheet index,\n"
-                    + "sheet name");
+                    + "sheet name, row number");
         
         parser.addArgument("--version", "-v").action(Arguments.version());
         

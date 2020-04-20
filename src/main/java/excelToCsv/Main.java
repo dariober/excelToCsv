@@ -102,6 +102,7 @@ public class Main {
         prefix.add(excelFile);
         prefix.add(Integer.toString(wb.getSheetIndex(sheetName) + 1));
         prefix.add(sheetName);
+        prefix.add("0"); // Row number
 
         Set<Integer> emptyColsIdx = new HashSet<Integer>();
         if(dropEmptyColumns) {
@@ -109,13 +110,14 @@ public class Main {
         }
         
         for (int r = 0; r <= lastRowNo; r++) {
-            
+            prefix.set(3, Integer.toString(r + 1));
             Row row = sheet.getRow(r);
             if(isEmptyRow(row) && dropEmptyRows) {
                 continue;
             }
             List<String> line = makeEmptyRow(lastColNo, na);
             if ( row != null ) { 
+                assert prefix.get(3).equals(Integer.toString((row.getRowNum()+1)));
                 for (int c = 0, cn = lastColNo; c < cn ; c++) {
                     
                     Cell cell = row.getCell(c, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);
