@@ -1,5 +1,5 @@
 [![Coverage Status](https://codecov.io/gh/dariober/excelToCsv/branch/master/graph/badge.svg)](https://codecov.io/gh/dariober/excelToCsv/branch/master)
-[![Build Status](https://travis-ci.com/dariober/excelToCsv.svg?branch=master)](https://travis-ci.com/dariober/excelToCsv)
+[![Build Status](https://travis-ci.com/dariober/excelToCsv.svg?branch=master)](https://app.travis-ci.com/github/dariober/excelToCsv)
 [![Language](http://img.shields.io/badge/language-java-brightgreen.svg)](https://www.java.com/)
 [![License](http://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/dariober/excelToCsv)
 
