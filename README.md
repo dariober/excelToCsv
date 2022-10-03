@@ -64,30 +64,32 @@ So the actual data starts at column 5.
 Options
 -------
 
-(Use `excelToCsv -h` for help)
+Use `excelToCsv -h` for help
 
 ```
---input INPUT [INPUT ...], -i INPUT [INPUT ...]
-                     xlsx or xls files to convert
---delimiter DELIMITER, -d DELIMITER
-                     Column delimiter (default: ,)
---na-string NA_STRING, -na NA_STRING
-                     String for missing values (empty cells) (default: )
---quote QUOTE, -q QUOTE
-                     Character for quoting (default: ")
---sheet-name SHEET_NAME [SHEET_NAME ...], -sn SHEET_NAME [SHEET_NAME ...]
-                     Optional list of sheet names to export
---sheet-index SHEET_INDEX [SHEET_INDEX ...], -si SHEET_INDEX [SHEET_INDEX ...]
-                     Optional list of sheet indexes to export (first sheet has index 1)
---drop-empty-rows, -r  Skip rows with only empty cells (default: false)
---drop-empty-cols, -c  Skip columns with only empty cells (default: false)
---date-as-iso, -I    Convert dates to ISO 8601 format and UTC standard.
-                     E.g 2020-03-28T11:40:10Z (default: false)
---no-format, -f      For numeric cells, return values without formatting.
-                     This prevents loss of data and gives parsable numeric
-                     strings (default: false)
---no-prefix, -p       Do not prefix rows with filename, sheet index,
-                     sheet name (default: false)
+  -h, --help             show this help message and exit
+  --input INPUT [INPUT ...], -i INPUT [INPUT ...]
+                         xlsx or xls files to convert
+  --delimiter DELIMITER, -d DELIMITER
+                         Column delimiter (default: ,)
+  --na-string NA_STRING, -na NA_STRING
+                         String for missing values (empty cells) (default: )
+  --quote QUOTE, -q QUOTE
+                         Character for quoting or 'none' for no quoting (default: ")
+  --sheet-name SHEET_NAME [SHEET_NAME ...], -sn SHEET_NAME [SHEET_NAME ...]
+                         Optional list of sheet names to export
+  --sheet-index SHEET_INDEX [SHEET_INDEX ...], -si SHEET_INDEX [SHEET_INDEX ...]
+                         Optional list of sheet indexes to export (first sheet has index 1)
+  --drop-empty-rows, -r  Skip rows with only empty cells (default: false)
+  --drop-empty-cols, -c  Skip columns with only empty cells (default: false)
+  --date-as-iso, -I      Convert dates to ISO 8601 format and UTC standard.
+                         E.g 2020-03-28T11:40:10Z (default: false)
+  --no-format, -f        For numeric cells, return values without formatting.
+                         This prevents loss of data and gives parsable numeric
+                         strings (default: false)
+  --no-prefix, -p        Do not prefix rows with filename, sheet index,
+                         sheet name, row number (default: false)
+  --version, -v
 ```
 
 Example usage:
