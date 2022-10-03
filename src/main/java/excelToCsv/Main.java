@@ -153,15 +153,22 @@ public class Main {
             throw new RuntimeException();
         }
         
-        if(quote.length() != 1) {
-            System.err.println("Quote must be a single character or an empty string for no quoting");
-            throw new RuntimeException();            
-        }
+        CsvPreference csvFormat;
         
-        CsvPreference csvFormat = new CsvPreference.Builder(quote.charAt(0), delimiter.charAt(0), "\n")
-                .surroundingSpacesNeedQuotes(false)
-                .build();
-    
+        if(quote.length() > 1 && !quote.equalsIgnoreCase("none")) {
+            System.err.println("Quote must be a single character or 'none' for no quoting");
+            throw new RuntimeException();            
+        } else if(quote.equalsIgnoreCase("none")) {
+            csvFormat = new CsvPreference.Builder(quote.charAt(0), delimiter.charAt(0), "\n")
+                    .useQuoteMode(new NoQuoteMode())
+                    .surroundingSpacesNeedQuotes(false)
+                    .build();
+        } else {            
+            csvFormat = new CsvPreference.Builder(quote.charAt(0), delimiter.charAt(0), "\n")
+                    .surroundingSpacesNeedQuotes(false)
+                    .build();
+        }
+            
         CsvListWriter listWriter = new CsvListWriter(new OutputStreamWriter(System.out),
                  csvFormat);
         return listWriter;

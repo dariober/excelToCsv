@@ -196,6 +196,17 @@ public class MainTest {
         assertEquals(0, stderr.length());
         assertTrue(StringUtils.countMatches(stdout, "\t\t") > 10);
     }
+
+    @Test
+    public void testNoQuote() throws InvalidFormatException, IOException {
+        String[] args = "-q none -d | -i test_data/quotes.xlsx".split(" ");
+        List<String> out = this.runMain(args);
+        String stdout = out.get(0);
+        String stderr = out.get(1);
+        
+        assertEquals(0, stderr.length());
+        assertTrue(stdout.contains("|Foo, \"bar\", eggs|"));
+    }
     
     @Test
     public void testQuote() throws InvalidFormatException, IOException {

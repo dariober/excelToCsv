@@ -9,7 +9,7 @@ import net.sourceforge.argparse4j.inf.Namespace;
 public class ArgParse {
     
     public static String PROG_NAME= "excelToCsv";
-    public static String VERSION= "0.2.0";
+    public static String VERSION= "0.3.0";
     
     /* Parse command line args */
     public static Namespace argParse(String[] args){
@@ -43,7 +43,7 @@ public class ArgParse {
             .type(String.class)
             .required(false)
             .setDefault("\"")
-            .help("Character for quoting");
+            .help("Character for quoting or 'none' for no quoting");
         
         parser.addArgument("--sheet-name", "-sn")
             .type(String.class)
