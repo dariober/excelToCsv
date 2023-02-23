@@ -13,6 +13,7 @@ jobs:
           ./excelToCsv -h || true
           ./excelToCsv -i test_data/simple01.xlsx
           ./gradlew test jacocoTestReport;
+          bash <(curl -s https://codecov.io/bash)
           # run: |
           #wget -O Mambaforge.sh  "https://github.com/conda-forge/miniforge/releases/latest/download/Mambaforge-$(uname)-$(uname -m).sh"
           #curl -L -O "https://github.com/conda-forge/miniforge/releases/latest/download/Mambaforge-$(uname)-$(uname -m).sh"
