@@ -1,4 +1,4 @@
-name: main
+name: CI
 on: [push]
 jobs:
   build-and-test:
@@ -14,18 +14,3 @@ jobs:
           ./excelToCsv -i test_data/simple01.xlsx
           ./gradlew test jacocoTestReport;
           bash <(curl -s https://codecov.io/bash)
-          # run: |
-          #wget -O Mambaforge.sh  "https://github.com/conda-forge/miniforge/releases/latest/download/Mambaforge-$(uname)-$(uname -m).sh"
-          #curl -L -O "https://github.com/conda-forge/miniforge/releases/latest/download/Mambaforge-$(uname)-$(uname -m).sh"
-          #bash Mambaforge.sh -b -p "${HOME}/conda"
-          #source "${HOME}/conda/etc/profile.d/conda.sh"
-          #source "${HOME}/conda/etc/profile.d/mamba.sh"
-          #which conda
-          #conda config --system --add channels defaults
-          #conda config --system --add channels bioconda
-          #conda config --system --add channels conda-forge
-          #conda config --system --set channel_priority strict
-          #mamba create -y -n tmp
-          #conda activate tmp
-          #mamba install samtools
-          #conda deactivate
