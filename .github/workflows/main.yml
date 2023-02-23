@@ -5,19 +5,25 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - name: conda env
+      - name: Build and Test
         run: |
-          wget -O Mambaforge.sh  "https://github.com/conda-forge/miniforge/releases/latest/download/Mambaforge-$(uname)-$(uname -m).sh"
-          curl -L -O "https://github.com/conda-forge/miniforge/releases/latest/download/Mambaforge-$(uname)-$(uname -m).sh"
-          bash Mambaforge.sh -b -p "${HOME}/conda"
-          source "${HOME}/conda/etc/profile.d/conda.sh"
-          source "${HOME}/conda/etc/profile.d/mamba.sh"
-          which conda
-          conda config --system --add channels defaults
-          conda config --system --add channels bioconda
-          conda config --system --add channels conda-forge
-          conda config --system --set channel_priority strict
-          mamba create -y -n tmp
-          conda activate tmp
-          mamba install samtools
-          conda deactivate
+          cat excelToCsv.stub build/libs/excelToCsv.jar > excelToCsv && chmod a+x excelToCsv
+          cp excelToCsv build/libs/
+          ./excelToCsv -h || true
+          ./excelToCsv -i test_data/simple01.xlsx
+          ./gradlew test jacocoTestReport;
+          # run: |
+          #wget -O Mambaforge.sh  "https://github.com/conda-forge/miniforge/releases/latest/download/Mambaforge-$(uname)-$(uname -m).sh"
+          #curl -L -O "https://github.com/conda-forge/miniforge/releases/latest/download/Mambaforge-$(uname)-$(uname -m).sh"
+          #bash Mambaforge.sh -b -p "${HOME}/conda"
+          #source "${HOME}/conda/etc/profile.d/conda.sh"
+          #source "${HOME}/conda/etc/profile.d/mamba.sh"
+          #which conda
+          #conda config --system --add channels defaults
+          #conda config --system --add channels bioconda
+          #conda config --system --add channels conda-forge
+          #conda config --system --set channel_priority strict
+          #mamba create -y -n tmp
+          #conda activate tmp
+          #mamba install samtools
+          #conda deactivate
