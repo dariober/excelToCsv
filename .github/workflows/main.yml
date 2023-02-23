@@ -7,6 +7,7 @@ jobs:
       - uses: actions/checkout@v3
       - name: Build and Test
         run: |
+          ./gradlew build
           cat excelToCsv.stub build/libs/excelToCsv.jar > excelToCsv && chmod a+x excelToCsv
           cp excelToCsv build/libs/
           ./excelToCsv -h || true
