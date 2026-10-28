@@ -112,7 +112,7 @@ Installation
 That is:
 
 ```
-curl -O https://github.com/dariober/excelToCsv/releases/download/vX.Y.Z/excelToCsv
+curl -O -L https://github.com/dariober/excelToCsv/releases/download/vX.Y.Z/excelToCsv
 chmod a+x excelToCsv
 cp excelToCsv /usr/local/bin/     # Or else in your PATH e.g. ~/bin/
 ```
